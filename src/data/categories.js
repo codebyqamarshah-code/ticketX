@@ -1,0 +1,153 @@
+export const categories = [
+  {
+    id: 'concerts',
+    slug: 'concerts',
+    label: 'Concerts',
+    icon: 'Music',
+    description: "Live music from the world's biggest artists",
+    href: '/concerts',
+  },
+  {
+    id: 'sports',
+    slug: 'sports',
+    label: 'Sports',
+    icon: 'Trophy',
+    description: 'NFL, NBA, MLB, NHL and more',
+    href: '/sports',
+  },
+  {
+    id: 'arts-theater',
+    slug: 'arts-theater',
+    label: 'Arts & Theater',
+    icon: 'Drama',
+    description: 'Broadway, musicals, opera, and dance',
+    href: '/arts-theater',
+  },
+  {
+    id: 'comedy',
+    slug: 'comedy',
+    label: 'Comedy',
+    icon: 'Smile',
+    description: 'Stand-up, improv, and comedy festivals',
+    href: '/comedy',
+  },
+  {
+    id: 'family',
+    slug: 'family',
+    label: 'Family',
+    icon: 'Heart',
+    description: 'Shows and events the whole family will love',
+    href: '/family',
+  },
+];
+
+export const trendingSearches = [
+  { id: 't1', label: 'Taylor Swift', category: 'concerts', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80', href: '/search?q=taylor+swift' },
+  { id: 't2', label: 'Drake', category: 'concerts', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80', href: '/search?q=drake' },
+  { id: 't3', label: 'Zach Bryan', category: 'concerts', image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80', href: '/search?q=zach+bryan' },
+  { id: 't4', label: 'Olivia Rodrigo', category: 'concerts', image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=80', href: '/search?q=olivia+rodrigo' },
+  { id: 't5', label: 'NBA', category: 'sports', image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80', href: '/search?q=nba' },
+  { id: 't6', label: 'WWE', category: 'sports', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', href: '/search?q=wwe' },
+  { id: 't7', label: 'Dave Chappelle', category: 'comedy', image: 'https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=400&q=80', href: '/search?q=dave+chappelle' },
+  { id: 't8', label: 'Broadway', category: 'arts-theater', image: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=400&q=80', href: '/search?q=broadway' },
+];
+
+export const entertainmentGuides = [
+  {
+    id: 'g1',
+    slug: 'concert-ticket-buying-guide',
+    title: 'Concert Ticket Buying Guide',
+    category: 'Concerts',
+    description: 'Everything you need to know about buying concert tickets — from presales to floor seats.',
+    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80',
+    href: '/help/concert-buying-guide',
+  },
+  {
+    id: 'g2',
+    slug: 'nfl-ticket-guide',
+    title: 'NFL Ticket Guide 2026',
+    category: 'Sports',
+    description: 'Your complete guide to the best NFL matchups, stadium experiences, and ticket strategies.',
+    image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600&q=80',
+    href: '/help/nfl-guide',
+  },
+  {
+    id: 'g3',
+    slug: 'mlb-ballpark-guide',
+    title: 'MLB Ballpark Guide',
+    category: 'Sports',
+    description: "Explore the greatest ballparks in America and find the perfect seat for America's pastime.",
+    image: 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&q=80',
+    href: '/help/mlb-guide',
+  },
+  {
+    id: 'g4',
+    slug: 'broadway-guide',
+    title: 'Broadway Guide',
+    category: 'Theater',
+    description: "The essential guide to Broadway — best seats, best shows, and how to score last-minute deals.",
+    image: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=600&q=80',
+    href: '/help/broadway-guide',
+  },
+  {
+    id: 'g5',
+    slug: 'family-events-guide',
+    title: 'Family Events Guide',
+    category: 'Family',
+    description: 'Discover the best family-friendly events near you — safe, fun, and memorable for all ages.',
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80',
+    href: '/help/family-guide',
+  },
+];
+
+export const discoverArticles = [
+  {
+    id: 'd1',
+    title: 'The Most Anticipated Tours of 2026',
+    category: 'Feature',
+    description: 'From stadium icons to indie darlings — these are the tours you cannot miss this year.',
+    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80',
+    href: '/about',
+  },
+  {
+    id: 'd2',
+    title: 'How to Plan the Perfect Concert Trip',
+    category: 'Guide',
+    description: 'Hotels, travel, parking, early arrival — the complete pre-concert checklist.',
+    image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=80',
+    href: '/about',
+  },
+  {
+    id: 'd3',
+    title: "A Local's Guide to LA Live Events",
+    category: 'City Guide',
+    description: 'The best venues, neighborhoods, and insider tips for experiencing live events in Los Angeles.',
+    image: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80',
+    href: '/cities/los-angeles',
+  },
+  {
+    id: 'd4',
+    title: '10 Family-Friendly Events This Fall',
+    category: 'Family',
+    description: 'From Disney on Ice to holiday spectaculars — events the whole family will talk about for years.',
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80',
+    href: '/family',
+  },
+  {
+    id: 'd5',
+    title: 'How to Score Last-Minute Tickets',
+    category: 'Tips',
+    description: 'Sold out? Think again. Our expert guide to finding tickets right before showtime.',
+    image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80',
+    href: '/help',
+  },
+];
+
+export const popularCities = [
+  { id: 'los-angeles', name: 'Los Angeles', country: 'USA', image: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80', href: '/cities/los-angeles' },
+  { id: 'new-york', name: 'New York', country: 'USA', image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80', href: '/cities/new-york' },
+  { id: 'las-vegas', name: 'Las Vegas', country: 'USA', image: 'https://images.unsplash.com/photo-1581351721010-8cf859cb14a4?w=600&q=80', href: '/cities/las-vegas' },
+  { id: 'chicago', name: 'Chicago', country: 'USA', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80', href: '/cities/chicago' },
+  { id: 'miami', name: 'Miami', country: 'USA', image: 'https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=600&q=80', href: '/cities/miami' },
+  { id: 'san-francisco', name: 'San Francisco', country: 'USA', image: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=600&q=80', href: '/cities/san-francisco' },
+];

@@ -1,0 +1,249 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-tx-bg: var(--bg);
+  --color-tx-bg-sec: var(--bg-sec);
+  --color-tx-fg: var(--fg);
+  --color-tx-fg-sec: var(--fg-sec);
+  --color-tx-border: var(--border);
+  --color-tx-card: var(--card);
+  
+  /* Shared static colors */
+  --color-tx-black: #000000;
+  --color-tx-near-black: #111111;
+  --color-tx-graphite: #2A2A2A;
+  --color-tx-soft-gray: #E5E5E5;
+  --color-tx-metallic: #B8B8B8;
+  --color-tx-white: #FFFFFF;
+}
+
+:root {
+  /* Light Mode UI Variables */
+  --bg: #FFFFFF;
+  --bg-sec: #F5F5F5;
+  --fg: #111111; /* near-black */
+  --fg-sec: #4A4A4A; /* dark gray */
+  --border: #E5E5E5;
+  --card: #FFFFFF;
+
+  /* LIGHT MODE CONCERT SPOTLIGHT PALETTE (Cyan, Electric Blue, Cool Violet, Soft Magenta) */
+  --beam-1-core: rgba(6, 182, 212, 0.38);   /* Cyan */
+  --beam-1-aura: rgba(37, 99, 235, 0.16);  /* Electric Blue */
+
+  --beam-2-core: rgba(37, 99, 235, 0.38);  /* Electric Blue */
+  --beam-2-aura: rgba(139, 92, 246, 0.16); /* Cool Violet */
+
+  --beam-3-core: rgba(139, 92, 246, 0.35);/* Cool Violet */
+  --beam-3-aura: rgba(217, 70, 239, 0.14);/* Soft Magenta */
+
+  --beam-4-core: rgba(217, 70, 239, 0.35);/* Soft Magenta */
+  --beam-4-aura: rgba(6, 182, 212, 0.14); /* Cyan */
+
+  --beam-5-core: rgba(6, 182, 212, 0.38);   /* Cyan */
+  --beam-5-aura: rgba(139, 92, 246, 0.16); /* Cool Violet */
+
+  --beam-6-core: rgba(37, 99, 235, 0.4);   /* Electric Blue */
+  --beam-6-aura: rgba(6, 182, 212, 0.16);  /* Cyan */
+
+  --beam-7-core: rgba(217, 70, 239, 0.33);/* Soft Magenta */
+  --beam-7-aura: rgba(37, 99, 235, 0.14);  /* Electric Blue */
+
+  --beam-8-core: rgba(139, 92, 246, 0.38); /* Cool Violet */
+  --beam-8-aura: rgba(6, 182, 212, 0.16);  /* Cyan */
+
+  --stage-haze-1: rgba(6, 182, 212, 0.12);
+  --stage-haze-2: rgba(139, 92, 246, 0.12);
+}
+
+.dark {
+  /* Dark Mode UI Variables */
+  --bg: #0A0A0A; /* near-black */
+  --bg-sec: #111111;
+  --fg: #FFFFFF;
+  --fg-sec: #B8B8B8; /* metallic/subtle gray */
+  --border: #2A2A2A; /* graphite */
+  --card: #151515;
+
+  /* DARK MODE CONCERT SPOTLIGHT PALETTE (Neon Purple, Hot Pink, Deep Magenta, Electric Red) */
+  --beam-1-core: rgba(168, 85, 247, 0.52);  /* Neon Purple */
+  --beam-1-aura: rgba(217, 70, 239, 0.22); /* Deep Magenta */
+
+  --beam-2-core: rgba(244, 63, 94, 0.5);   /* Hot Pink */
+  --beam-2-aura: rgba(239, 68, 68, 0.22);  /* Electric Red */
+
+  --beam-3-core: rgba(217, 70, 239, 0.48); /* Deep Magenta */
+  --beam-3-aura: rgba(168, 85, 247, 0.2);  /* Neon Purple */
+
+  --beam-4-core: rgba(239, 68, 68, 0.46);  /* Electric Red */
+  --beam-4-aura: rgba(244, 63, 94, 0.22);  /* Hot Pink */
+
+  --beam-5-core: rgba(168, 85, 247, 0.52);  /* Neon Purple */
+  --beam-5-aura: rgba(244, 63, 94, 0.22);  /* Hot Pink */
+
+  --beam-6-core: rgba(217, 70, 239, 0.48); /* Deep Magenta */
+  --beam-6-aura: rgba(239, 68, 68, 0.2);   /* Electric Red */
+
+  --beam-7-core: rgba(244, 63, 94, 0.46);  /* Hot Pink */
+  --beam-7-aura: rgba(168, 85, 247, 0.2);  /* Neon Purple */
+
+  --beam-8-core: rgba(168, 85, 247, 0.5);   /* Neon Purple */
+  --beam-8-aura: rgba(217, 70, 239, 0.22); /* Deep Magenta */
+
+  --stage-haze-1: rgba(168, 85, 247, 0.22);
+  --stage-haze-2: rgba(244, 63, 94, 0.2);
+}
+
+html, body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-inter), 'Inter', ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-poppins), 'Poppins', var(--font-inter), sans-serif;
+}
+
+/* Base resets */
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-sec);
+}
+
+/* =========================================================
+   STAGE MOVING HEAD SPOTLIGHT SWEEP ANIMATIONS (GPU OPTIMIZED)
+   ========================================================= */
+
+@keyframes stagePulseGlow {
+  0%, 100% {
+    opacity: 0.18;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.38;
+    transform: scale(1.15);
+  }
+}
+
+/* Spotlight 1: Left sweep */
+@keyframes spotlightSweep1 {
+  0% { transform: rotate(-24deg) scaleY(1); opacity: 0.8; }
+  50% { transform: rotate(16deg) scaleY(1.08); opacity: 1; }
+  100% { transform: rotate(-24deg) scaleY(1); opacity: 0.8; }
+}
+
+/* Spotlight 2: Mid-left reverse sweep */
+@keyframes spotlightSweep2 {
+  0% { transform: rotate(20deg) scaleY(1.05); opacity: 0.9; }
+  50% { transform: rotate(-18deg) scaleY(1); opacity: 0.75; }
+  100% { transform: rotate(20deg) scaleY(1.05); opacity: 0.9; }
+}
+
+/* Spotlight 3: Fast center-left sweep */
+@keyframes spotlightSweep3 {
+  0% { transform: rotate(-14deg) scaleY(1.02); opacity: 0.85; }
+  50% { transform: rotate(22deg) scaleY(1.1); opacity: 0.95; }
+  100% { transform: rotate(-14deg) scaleY(1.02); opacity: 0.85; }
+}
+
+/* Spotlight 4: Center right sweep */
+@keyframes spotlightSweep4 {
+  0% { transform: rotate(18deg) scaleY(1.06); opacity: 0.9; }
+  50% { transform: rotate(-22deg) scaleY(1); opacity: 0.8; }
+  100% { transform: rotate(18deg) scaleY(1.06); opacity: 0.9; }
+}
+
+/* Spotlight 5: Center left deep sweep */
+@keyframes spotlightSweep5 {
+  0% { transform: rotate(-20deg) scaleY(1); opacity: 0.85; }
+  50% { transform: rotate(24deg) scaleY(1.08); opacity: 1; }
+  100% { transform: rotate(-20deg) scaleY(1); opacity: 0.85; }
+}
+
+/* Spotlight 6: Mid-right sharp sweep */
+@keyframes spotlightSweep6 {
+  0% { transform: rotate(22deg) scaleY(1.08); opacity: 0.95; }
+  50% { transform: rotate(-15deg) scaleY(1.02); opacity: 0.8; }
+  100% { transform: rotate(22deg) scaleY(1.08); opacity: 0.95; }
+}
+
+/* Spotlight 7: Far right slow sweep */
+@keyframes spotlightSweep7 {
+  0% { transform: rotate(-16deg) scaleY(1); opacity: 0.8; }
+  50% { transform: rotate(26deg) scaleY(1.1); opacity: 0.95; }
+  100% { transform: rotate(-16deg) scaleY(1); opacity: 0.8; }
+}
+
+/* Spotlight 8: Far right return sweep */
+@keyframes spotlightSweep8 {
+  0% { transform: rotate(24deg) scaleY(1.05); opacity: 0.9; }
+  50% { transform: rotate(-18deg) scaleY(1); opacity: 0.85; }
+  100% { transform: rotate(24deg) scaleY(1.05); opacity: 0.9; }
+}
+
+/* Mobile Sweeps */
+@keyframes spotlightSweepMobile1 {
+  0% { transform: rotate(-18deg); }
+  50% { transform: rotate(15deg); }
+  100% { transform: rotate(-18deg); }
+}
+
+@keyframes spotlightSweepMobile2 {
+  0% { transform: rotate(16deg); }
+  50% { transform: rotate(-16deg); }
+  100% { transform: rotate(16deg); }
+}
+
+@keyframes spotlightSweepMobile3 {
+  0% { transform: rotate(-15deg); }
+  50% { transform: rotate(20deg); }
+  100% { transform: rotate(-15deg); }
+}
+
+.animate-spotlight-sweep-1 { animation: spotlightSweep1 14s ease-in-out infinite; }
+.animate-spotlight-sweep-2 { animation: spotlightSweep2 18s ease-in-out infinite; animation-delay: 1.5s; }
+.animate-spotlight-sweep-3 { animation: spotlightSweep3 11s ease-in-out infinite; animation-delay: 0.5s; }
+.animate-spotlight-sweep-4 { animation: spotlightSweep4 16s ease-in-out infinite; animation-delay: 3s; }
+.animate-spotlight-sweep-5 { animation: spotlightSweep5 15s ease-in-out infinite; animation-delay: 2s; }
+.animate-spotlight-sweep-6 { animation: spotlightSweep6 12s ease-in-out infinite; animation-delay: 4s; }
+.animate-spotlight-sweep-7 { animation: spotlightSweep7 20s ease-in-out infinite; animation-delay: 1s; }
+.animate-spotlight-sweep-8 { animation: spotlightSweep8 13s ease-in-out infinite; animation-delay: 2.5s; }
+
+.animate-spotlight-sweep-mobile-1 { animation: spotlightSweepMobile1 13s ease-in-out infinite; }
+.animate-spotlight-sweep-mobile-2 { animation: spotlightSweepMobile2 16s ease-in-out infinite; animation-delay: 2s; }
+.animate-spotlight-sweep-mobile-3 { animation: spotlightSweepMobile3 14s ease-in-out infinite; animation-delay: 1s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spotlight-sweep-1,
+  .animate-spotlight-sweep-2,
+  .animate-spotlight-sweep-3,
+  .animate-spotlight-sweep-4,
+  .animate-spotlight-sweep-5,
+  .animate-spotlight-sweep-6,
+  .animate-spotlight-sweep-7,
+  .animate-spotlight-sweep-8,
+  .animate-spotlight-sweep-mobile-1,
+  .animate-spotlight-sweep-mobile-2,
+  .animate-spotlight-sweep-mobile-3 {
+    animation: none !important;
+    transform: rotate(0deg) !important;
+    opacity: 0.5 !important;
+  }
+}
