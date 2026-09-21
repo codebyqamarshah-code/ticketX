@@ -98,7 +98,13 @@ function SearchOverlay({ onClose }) {
 
           {/* Results */}
           {results.length > 0 && (
-            <div className="mt-4 space-y-1">
+            <div
+              className="mt-4 space-y-1 max-h-[60vh] overflow-y-auto overflow-x-hidden pr-1.5 custom-dropdown-scroll"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'var(--fg-sec) var(--bg-sec)',
+              }}
+            >
               {results.map((event) => (
                 <Link
                   key={event.id}
@@ -117,7 +123,7 @@ function SearchOverlay({ onClose }) {
               <Link
                 href={`/search?q=${encodeURIComponent(query)}`}
                 onClick={onClose}
-                className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[var(--fg)] hover:bg-[var(--bg-sec)] rounded-xl transition-colors mt-2 border-t border-[var(--border)] pt-3"
+                className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-[var(--fg)] hover:bg-[var(--bg-sec)] rounded-xl transition-colors mt-2 border-t border-[var(--border)] pt-3"
               >
                 <span>See all results for &quot;{query}&quot;</span>
                 <ArrowRight size={14} />

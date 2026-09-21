@@ -29,17 +29,17 @@ const footerLinks = {
   ],
   Company: [
     { label: 'About Us', href: '/about' },
-    { label: 'TicketX+', href: '/about' },
-    { label: 'Blog', href: '/about' },
-    { label: 'Press', href: '/about' },
-    { label: 'Careers', href: '/about' },
+    { label: 'TicketX+', href: '/ticketx-plus' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Press', href: '/press' },
+    { label: 'Careers', href: '/careers' },
   ],
   Support: [
     { label: 'Help Center', href: '/help' },
     { label: 'Contact Us', href: '/contact' },
-    { label: 'Accessibility', href: '/help' },
-    { label: 'Refund Policy', href: '/help' },
-    { label: 'Venue Info', href: '/help' },
+    { label: 'Accessibility', href: '/accessibility' },
+    { label: 'Refund Policy', href: '/refund-policy' },
+    { label: 'Venue Info', href: '/venues' },
   ],
 };
 

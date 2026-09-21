@@ -90,7 +90,13 @@ export default function LocationSelector({ variant = 'header', className = '' })
             </button>
 
             {/* Cities list */}
-            <div className="max-h-52 overflow-y-auto">
+            <div
+              className="max-h-60 overflow-y-auto overflow-x-hidden p-1 space-y-0.5 custom-dropdown-scroll"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'var(--fg-sec) var(--bg-sec)',
+              }}
+            >
               {filtered.length === 0 ? (
                 <p className="px-4 py-3 text-sm text-[var(--fg-sec)]">No cities found</p>
               ) : (
@@ -100,11 +106,11 @@ export default function LocationSelector({ variant = 'header', className = '' })
                     role="option"
                     aria-selected={location.cityId === city.id}
                     onClick={() => handleSelectCity(city)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-[var(--bg-sec)] transition-colors text-left ${location.cityId === city.id ? 'text-[var(--fg)] font-semibold' : 'text-[var(--fg-sec)]'}`}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm hover:bg-[var(--bg-sec)] transition-colors text-left ${location.cityId === city.id ? 'text-[var(--fg)] font-semibold bg-[var(--bg-sec)]' : 'text-[var(--fg-sec)]'}`}
                   >
-                    <MapPin size={12} className="shrink-0 text-[var(--fg-sec)]" />
+                    <MapPin size={13} className="shrink-0 text-[var(--fg-sec)]" />
                     <span>{city.name}</span>
-                    <span className="ml-auto text-xs text-[var(--fg-sec)]">{city.country}</span>
+                    <span className="ml-auto text-xs text-[var(--fg-sec)] opacity-80">{city.country}</span>
                   </button>
                 ))
               )}

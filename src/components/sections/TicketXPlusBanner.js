@@ -44,7 +44,7 @@ export default function TicketXPlusBanner() {
 
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href="/about"
+                  href="/ticketx-plus"
                   className="inline-flex items-center gap-2 px-5 py-3 bg-[var(--fg)] text-[var(--bg)] text-sm font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all duration-200"
                 >
                   Explore TicketX+
