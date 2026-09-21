@@ -16,7 +16,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <main id="main-content">
+      <main id="main-content" className="bg-transparent">
         {/* 1. Header is rendered above */}
 
         {/* 2. Hero */}
@@ -35,7 +35,7 @@ export default function HomePage() {
         <PopularNearYou />
 
         {/* 7. Sports */}
-        <div className="bg-[var(--bg-sec)] border-t border-[var(--border)]">
+        <div className="bg-[var(--bg-sec)]/50 border-t border-[var(--border)]">
           <CategorySection
             category="sports"
             title="Sports"
@@ -45,7 +45,7 @@ export default function HomePage() {
         </div>
 
         {/* 8. Arts, Theater & Comedy */}
-        <div className="bg-[var(--bg)] border-t border-[var(--border)]">
+        <div className="bg-transparent border-t border-[var(--border)]">
           <CategorySection
             category="arts-theater"
             title="Arts, Theater & Comedy"
@@ -55,7 +55,7 @@ export default function HomePage() {
         </div>
 
         {/* 9. Family */}
-        <div className="bg-[var(--bg-sec)] border-t border-[var(--border)]">
+        <div className="bg-[var(--bg-sec)]/50 border-t border-[var(--border)]">
           <CategorySection
             category="family"
             title="Family"

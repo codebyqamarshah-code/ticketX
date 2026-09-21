@@ -34,18 +34,19 @@ export default function LocationSelector({ variant = 'header', className = '' })
   };
 
   return (
-    <div ref={ref} className={`relative ${className}`}>
+    <div ref={ref} className={`relative inline-block ${className}`}>
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 text-sm text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg-sec)] rounded px-1"
+        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[var(--fg)] hover:text-white bg-[var(--card)] hover:bg-[var(--bg-sec)] border border-[var(--border)] px-2.5 py-1 rounded-full transition-all duration-200 focus:outline-none shadow-sm cursor-pointer"
         aria-expanded={open}
         aria-haspopup="listbox"
       >
-        <MapPin size={14} className="shrink-0" />
-        <span className="hidden sm:inline font-medium max-w-[120px] truncate">
+        <MapPin size={13} className="shrink-0 text-red-500" />
+        <span className="inline-block max-w-[130px] truncate">
           {location.city}
         </span>
-        <ChevronDown size={12} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={12} className={`transition-transform duration-200 opacity-70 ${open ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>

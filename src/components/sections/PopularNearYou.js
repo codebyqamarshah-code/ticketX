@@ -31,21 +31,17 @@ export default function PopularNearYou() {
   return (
     <section className="py-14 bg-[var(--bg)]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-          <div>
-            <SectionHeader
-              title="Popular Near You"
-              href={`/cities/${location.cityId}`}
-              icon={MapPin}
-            />
-            <div className="flex items-center gap-2 -mt-2 mb-2">
-              <p className="text-sm text-[var(--fg-sec)]">
-                Showing events near <span className="font-semibold text-[var(--fg)]">{location.city}{location.country ? `, ${location.country}` : ''}</span>
-              </p>
+        <SectionHeader
+          title="Popular Near You"
+          href={`/cities/${location.cityId}`}
+          icon={MapPin}
+          subtitle={
+            <span className="inline-flex items-center gap-2 flex-wrap text-sm text-[var(--fg-sec)]">
+              <span>Showing events near</span>
               <LocationSelector />
-            </div>
-          </div>
-        </div>
+            </span>
+          }
+        />
 
         {/* Tabs */}
         <div className="flex gap-1 overflow-x-auto pb-2 mb-8" style={{ scrollbarWidth: 'none' }}>

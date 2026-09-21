@@ -29,6 +29,8 @@
   --card: #FFFFFF;
 
   /* LIGHT MODE CONCERT SPOTLIGHT PALETTE (Cyan, Electric Blue, Cool Violet, Soft Magenta) */
+  --beam-blend-mode: normal;
+
   --beam-1-core: rgba(6, 182, 212, 0.38);   /* Cyan */
   --beam-1-aura: rgba(37, 99, 235, 0.16);  /* Electric Blue */
 
@@ -53,8 +55,8 @@
   --beam-8-core: rgba(139, 92, 246, 0.38); /* Cool Violet */
   --beam-8-aura: rgba(6, 182, 212, 0.16);  /* Cyan */
 
-  --stage-haze-1: rgba(6, 182, 212, 0.12);
-  --stage-haze-2: rgba(139, 92, 246, 0.12);
+  --stage-haze-1: rgba(6, 182, 212, 0.18);
+  --stage-haze-2: rgba(139, 92, 246, 0.18);
 }
 
 .dark {
@@ -67,6 +69,8 @@
   --card: #151515;
 
   /* DARK MODE CONCERT SPOTLIGHT PALETTE (Neon Purple, Hot Pink, Deep Magenta, Electric Red) */
+  --beam-blend-mode: screen;
+
   --beam-1-core: rgba(168, 85, 247, 0.52);  /* Neon Purple */
   --beam-1-aura: rgba(217, 70, 239, 0.22); /* Deep Magenta */
 
@@ -91,15 +95,28 @@
   --beam-8-core: rgba(168, 85, 247, 0.5);   /* Neon Purple */
   --beam-8-aura: rgba(217, 70, 239, 0.22); /* Deep Magenta */
 
-  --stage-haze-1: rgba(168, 85, 247, 0.22);
-  --stage-haze-2: rgba(244, 63, 94, 0.2);
+  --stage-haze-1: rgba(168, 85, 247, 0.25);
+  --stage-haze-2: rgba(244, 63, 94, 0.22);
 }
 
-html, body {
+/* Global Smooth Scroll & Hardware Accelerated Performance */
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
   background-color: var(--bg);
   color: var(--fg);
   font-family: var(--font-inter), 'Inter', ui-sans-serif, system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Explicit Cursor Pointer for all clickable interactive elements */
+a, button, [role="button"], input[type="button"], input[type="submit"], input[type="range"], select, .cursor-pointer {
+  cursor: pointer !important;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
@@ -128,93 +145,108 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 /* =========================================================
-   STAGE MOVING HEAD SPOTLIGHT SWEEP ANIMATIONS (GPU OPTIMIZED)
+   STAGE MOVING HEAD SPOTLIGHT SWEEP ANIMATIONS (GPU HARDWARE ACCELERATED)
    ========================================================= */
+
+.animate-spotlight-sweep-1,
+.animate-spotlight-sweep-2,
+.animate-spotlight-sweep-3,
+.animate-spotlight-sweep-4,
+.animate-spotlight-sweep-5,
+.animate-spotlight-sweep-6,
+.animate-spotlight-sweep-7,
+.animate-spotlight-sweep-8,
+.animate-spotlight-sweep-mobile-1,
+.animate-spotlight-sweep-mobile-2,
+.animate-spotlight-sweep-mobile-3 {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
 
 @keyframes stagePulseGlow {
   0%, 100% {
-    opacity: 0.18;
-    transform: scale(1);
+    opacity: 0.35;
+    transform: scale(1) translateZ(0);
   }
   50% {
-    opacity: 0.38;
-    transform: scale(1.15);
+    opacity: 0.65;
+    transform: scale(1.15) translateZ(0);
   }
 }
 
 /* Spotlight 1: Left sweep */
 @keyframes spotlightSweep1 {
-  0% { transform: rotate(-24deg) scaleY(1); opacity: 0.8; }
-  50% { transform: rotate(16deg) scaleY(1.08); opacity: 1; }
-  100% { transform: rotate(-24deg) scaleY(1); opacity: 0.8; }
+  0% { transform: rotate(-24deg) scaleY(1) translateZ(0); opacity: 0.85; }
+  50% { transform: rotate(16deg) scaleY(1.08) translateZ(0); opacity: 1; }
+  100% { transform: rotate(-24deg) scaleY(1) translateZ(0); opacity: 0.85; }
 }
 
 /* Spotlight 2: Mid-left reverse sweep */
 @keyframes spotlightSweep2 {
-  0% { transform: rotate(20deg) scaleY(1.05); opacity: 0.9; }
-  50% { transform: rotate(-18deg) scaleY(1); opacity: 0.75; }
-  100% { transform: rotate(20deg) scaleY(1.05); opacity: 0.9; }
+  0% { transform: rotate(20deg) scaleY(1.05) translateZ(0); opacity: 0.9; }
+  50% { transform: rotate(-18deg) scaleY(1) translateZ(0); opacity: 0.8; }
+  100% { transform: rotate(20deg) scaleY(1.05) translateZ(0); opacity: 0.9; }
 }
 
 /* Spotlight 3: Fast center-left sweep */
 @keyframes spotlightSweep3 {
-  0% { transform: rotate(-14deg) scaleY(1.02); opacity: 0.85; }
-  50% { transform: rotate(22deg) scaleY(1.1); opacity: 0.95; }
-  100% { transform: rotate(-14deg) scaleY(1.02); opacity: 0.85; }
+  0% { transform: rotate(-14deg) scaleY(1.02) translateZ(0); opacity: 0.88; }
+  50% { transform: rotate(22deg) scaleY(1.1) translateZ(0); opacity: 0.98; }
+  100% { transform: rotate(-14deg) scaleY(1.02) translateZ(0); opacity: 0.88; }
 }
 
 /* Spotlight 4: Center right sweep */
 @keyframes spotlightSweep4 {
-  0% { transform: rotate(18deg) scaleY(1.06); opacity: 0.9; }
-  50% { transform: rotate(-22deg) scaleY(1); opacity: 0.8; }
-  100% { transform: rotate(18deg) scaleY(1.06); opacity: 0.9; }
+  0% { transform: rotate(18deg) scaleY(1.06) translateZ(0); opacity: 0.92; }
+  50% { transform: rotate(-22deg) scaleY(1) translateZ(0); opacity: 0.82; }
+  100% { transform: rotate(18deg) scaleY(1.06) translateZ(0); opacity: 0.92; }
 }
 
 /* Spotlight 5: Center left deep sweep */
 @keyframes spotlightSweep5 {
-  0% { transform: rotate(-20deg) scaleY(1); opacity: 0.85; }
-  50% { transform: rotate(24deg) scaleY(1.08); opacity: 1; }
-  100% { transform: rotate(-20deg) scaleY(1); opacity: 0.85; }
+  0% { transform: rotate(-20deg) scaleY(1) translateZ(0); opacity: 0.88; }
+  50% { transform: rotate(24deg) scaleY(1.08) translateZ(0); opacity: 1; }
+  100% { transform: rotate(-20deg) scaleY(1) translateZ(0); opacity: 0.88; }
 }
 
 /* Spotlight 6: Mid-right sharp sweep */
 @keyframes spotlightSweep6 {
-  0% { transform: rotate(22deg) scaleY(1.08); opacity: 0.95; }
-  50% { transform: rotate(-15deg) scaleY(1.02); opacity: 0.8; }
-  100% { transform: rotate(22deg) scaleY(1.08); opacity: 0.95; }
+  0% { transform: rotate(22deg) scaleY(1.08) translateZ(0); opacity: 0.95; }
+  50% { transform: rotate(-15deg) scaleY(1.02) translateZ(0); opacity: 0.82; }
+  100% { transform: rotate(22deg) scaleY(1.08) translateZ(0); opacity: 0.95; }
 }
 
 /* Spotlight 7: Far right slow sweep */
 @keyframes spotlightSweep7 {
-  0% { transform: rotate(-16deg) scaleY(1); opacity: 0.8; }
-  50% { transform: rotate(26deg) scaleY(1.1); opacity: 0.95; }
-  100% { transform: rotate(-16deg) scaleY(1); opacity: 0.8; }
+  0% { transform: rotate(-16deg) scaleY(1) translateZ(0); opacity: 0.85; }
+  50% { transform: rotate(26deg) scaleY(1.1) translateZ(0); opacity: 0.98; }
+  100% { transform: rotate(-16deg) scaleY(1) translateZ(0); opacity: 0.85; }
 }
 
 /* Spotlight 8: Far right return sweep */
 @keyframes spotlightSweep8 {
-  0% { transform: rotate(24deg) scaleY(1.05); opacity: 0.9; }
-  50% { transform: rotate(-18deg) scaleY(1); opacity: 0.85; }
-  100% { transform: rotate(24deg) scaleY(1.05); opacity: 0.9; }
+  0% { transform: rotate(24deg) scaleY(1.05) translateZ(0); opacity: 0.92; }
+  50% { transform: rotate(-18deg) scaleY(1) translateZ(0); opacity: 0.88; }
+  100% { transform: rotate(24deg) scaleY(1.05) translateZ(0); opacity: 0.92; }
 }
 
 /* Mobile Sweeps */
 @keyframes spotlightSweepMobile1 {
-  0% { transform: rotate(-18deg); }
-  50% { transform: rotate(15deg); }
-  100% { transform: rotate(-18deg); }
+  0% { transform: rotate(-18deg) translateZ(0); }
+  50% { transform: rotate(15deg) translateZ(0); }
+  100% { transform: rotate(-18deg) translateZ(0); }
 }
 
 @keyframes spotlightSweepMobile2 {
-  0% { transform: rotate(16deg); }
-  50% { transform: rotate(-16deg); }
-  100% { transform: rotate(16deg); }
+  0% { transform: rotate(16deg) translateZ(0); }
+  50% { transform: rotate(-16deg) translateZ(0); }
+  100% { transform: rotate(16deg) translateZ(0); }
 }
 
 @keyframes spotlightSweepMobile3 {
-  0% { transform: rotate(-15deg); }
-  50% { transform: rotate(20deg); }
-  100% { transform: rotate(-15deg); }
+  0% { transform: rotate(-15deg) translateZ(0); }
+  50% { transform: rotate(20deg) translateZ(0); }
+  100% { transform: rotate(-15deg) translateZ(0); }
 }
 
 .animate-spotlight-sweep-1 { animation: spotlightSweep1 14s ease-in-out infinite; }

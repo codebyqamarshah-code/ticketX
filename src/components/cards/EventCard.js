@@ -46,7 +46,7 @@ export function EventCard({ event, className = '' }) {
             unoptimized
           />
           {/* Subtle vignette gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
           {/* Top badges */}
           <div className="absolute top-3 left-3 flex gap-1.5 flex-wrap z-10">
@@ -167,7 +167,7 @@ export function FeaturedEventCard({ event, className = '' }) {
         onError={() => setImgSrc(FALLBACK_IMAGE)}
         unoptimized
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
       <div className="absolute top-4 left-4 z-10">
         <span className="text-[10px] font-black uppercase tracking-widest bg-black/60 backdrop-blur-md text-white px-2.5 py-1 rounded-md border border-white/20">
@@ -211,7 +211,7 @@ export function CityCard({ city, className = '' }) {
         onError={() => setImgSrc(FALLBACK_IMAGE)}
         unoptimized
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
         <h3 className="text-sm font-bold text-white tracking-tight">{city.name}</h3>
         <p className="text-[10px] text-white/70 uppercase tracking-widest font-medium">{city.country}</p>
@@ -240,7 +240,7 @@ export function GuideCard({ guide, className = '' }) {
             onError={() => setImgSrc(FALLBACK_IMAGE)}
             unoptimized
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           <div className="absolute top-3 left-3 z-10">
             <span className="text-[9px] font-black uppercase tracking-widest bg-[var(--fg)] text-[var(--bg)] px-2.5 py-0.5 rounded-md">
               {guide.category}
@@ -282,7 +282,7 @@ export function TrendingCard({ item, className = '' }) {
         onError={() => setImgSrc(FALLBACK_IMAGE)}
         unoptimized
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
         <p className="text-[9px] uppercase font-bold tracking-widest text-white/60 mb-0.5">{item.category}</p>
         <h4 className="text-xs font-black text-white leading-tight">{item.label}</h4>

@@ -59,10 +59,10 @@ export default function EventDetailPage() {
       <main className="min-h-screen pt-20 bg-[var(--bg)] pb-24 lg:pb-16">
         {/* Event Hero */}
         <section className="relative py-12 md:py-20 border-b border-[var(--border)] overflow-hidden bg-[var(--bg-sec)]">
-          <div className="absolute inset-0 opacity-25 pointer-events-none">
-            <Image src={event.image} alt={event.title} fill className="object-cover" unoptimized />
+          <div className="absolute inset-0 opacity-85 pointer-events-none">
+            <Image src={event.image} alt={event.title} fill className="object-cover object-center" unoptimized />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/90 to-transparent md:bg-gradient-to-r" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/60 to-transparent md:bg-gradient-to-r" />
 
           <div className="relative max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
             <div className="grid lg:grid-cols-3 gap-8 items-end">
@@ -217,7 +217,7 @@ export default function EventDetailPage() {
                 </div>
 
                 <Link
-                  href="/checkout"
+                  href={`/event/${event.slug}/tickets`}
                   className="block w-full py-4 bg-[var(--fg)] text-[var(--bg)] text-sm font-black uppercase tracking-wider rounded-xl text-center hover:opacity-90 active:scale-95 transition-all shadow-lg"
                 >
                   FIND TICKETS
@@ -252,7 +252,7 @@ export default function EventDetailPage() {
             <p className="text-xl font-black text-[var(--fg)]">${event.priceFrom}</p>
           </div>
           <Link
-            href="/checkout"
+            href={`/event/${event.slug}/tickets`}
             className="flex-1 py-3.5 bg-[var(--fg)] text-[var(--bg)] text-xs font-black uppercase tracking-wider rounded-xl text-center hover:opacity-90 active:scale-95 transition-all shadow-md"
           >
             FIND TICKETS

@@ -18,28 +18,34 @@ export default function CategorySection({ category, title, href, icon: Icon }) {
 
   if (events.length === 0) return null;
 
+  const scrollButtons = (
+    <div className="flex items-center gap-1.5 ml-2">
+      <button
+        onClick={() => scroll(-1)}
+        className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)] focus:outline-none"
+        aria-label="Scroll left"
+      >
+        <ChevronLeft size={16} />
+      </button>
+      <button
+        onClick={() => scroll(1)}
+        className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)] focus:outline-none"
+        aria-label="Scroll right"
+      >
+        <ChevronRight size={16} />
+      </button>
+    </div>
+  );
+
   return (
     <section className="py-14">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-6">
-          <SectionHeader title={title} href={href} icon={Icon} />
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              onClick={() => scroll(-1)}
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={() => scroll(1)}
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
-              aria-label="Scroll right"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+        <SectionHeader
+          title={title}
+          href={href}
+          icon={Icon}
+          rightAction={scrollButtons}
+        />
 
         {/* Horizontal scroll on mobile/tablet, grid on desktop */}
         <div

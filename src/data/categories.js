@@ -60,7 +60,7 @@ export const entertainmentGuides = [
     category: 'Concerts',
     description: 'Everything you need to know about buying concert tickets — from presales to floor seats.',
     image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80',
-    href: '/help/concert-buying-guide',
+    href: '/guides/concert-ticket-buying-guide',
   },
   {
     id: 'g2',
@@ -69,7 +69,7 @@ export const entertainmentGuides = [
     category: 'Sports',
     description: 'Your complete guide to the best NFL matchups, stadium experiences, and ticket strategies.',
     image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600&q=80',
-    href: '/help/nfl-guide',
+    href: '/guides/nfl-ticket-guide',
   },
   {
     id: 'g3',
@@ -78,7 +78,7 @@ export const entertainmentGuides = [
     category: 'Sports',
     description: "Explore the greatest ballparks in America and find the perfect seat for America's pastime.",
     image: 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&q=80',
-    href: '/help/mlb-guide',
+    href: '/guides/mlb-ballpark-guide',
   },
   {
     id: 'g4',
@@ -87,7 +87,7 @@ export const entertainmentGuides = [
     category: 'Theater',
     description: "The essential guide to Broadway — best seats, best shows, and how to score last-minute deals.",
     image: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=600&q=80',
-    href: '/help/broadway-guide',
+    href: '/guides/broadway-guide',
   },
   {
     id: 'g5',
@@ -96,50 +96,55 @@ export const entertainmentGuides = [
     category: 'Family',
     description: 'Discover the best family-friendly events near you — safe, fun, and memorable for all ages.',
     image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80',
-    href: '/help/family-guide',
+    href: '/guides/family-events-guide',
   },
 ];
 
 export const discoverArticles = [
   {
     id: 'd1',
+    slug: 'most-anticipated-tours-2026',
     title: 'The Most Anticipated Tours of 2026',
     category: 'Feature',
     description: 'From stadium icons to indie darlings — these are the tours you cannot miss this year.',
     image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=80',
-    href: '/about',
+    href: '/guides/most-anticipated-tours-2026',
   },
   {
     id: 'd2',
+    slug: 'plan-perfect-concert-trip',
     title: 'How to Plan the Perfect Concert Trip',
     category: 'Guide',
     description: 'Hotels, travel, parking, early arrival — the complete pre-concert checklist.',
     image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=80',
-    href: '/about',
+    href: '/guides/plan-perfect-concert-trip',
   },
   {
     id: 'd3',
+    slug: 'local-guide-la-live-events',
     title: "A Local's Guide to LA Live Events",
     category: 'City Guide',
     description: 'The best venues, neighborhoods, and insider tips for experiencing live events in Los Angeles.',
     image: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80',
-    href: '/cities/los-angeles',
+    href: '/guides/local-guide-la-live-events',
   },
   {
     id: 'd4',
+    slug: 'family-friendly-events-fall',
     title: '10 Family-Friendly Events This Fall',
     category: 'Family',
     description: 'From Disney on Ice to holiday spectaculars — events the whole family will talk about for years.',
     image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80',
-    href: '/family',
+    href: '/guides/family-friendly-events-fall',
   },
   {
     id: 'd5',
+    slug: 'score-last-minute-tickets',
     title: 'How to Score Last-Minute Tickets',
     category: 'Tips',
     description: 'Sold out? Think again. Our expert guide to finding tickets right before showtime.',
     image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80',
-    href: '/help',
+    href: '/guides/score-last-minute-tickets',
   },
 ];
 

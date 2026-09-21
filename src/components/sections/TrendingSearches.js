@@ -1,9 +1,9 @@
 'use client';
 
 import { useRef } from 'react';
-import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SectionHeader from '@/components/ui/SectionHeader';
 import { TrendingCard } from '@/components/cards/EventCard';
 import { trendingSearches } from '@/data/categories';
 
@@ -15,37 +15,35 @@ export default function TrendingSearches() {
     scrollRef.current.scrollBy({ left: dir * 200, behavior: 'smooth' });
   };
 
+  const scrollButtons = (
+    <div className="flex items-center gap-1.5 ml-2">
+      <button
+        onClick={() => scroll(-1)}
+        className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)] focus:outline-none"
+        aria-label="Scroll left"
+      >
+        <ChevronLeft size={16} />
+      </button>
+      <button
+        onClick={() => scroll(1)}
+        className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)] focus:outline-none"
+        aria-label="Scroll right"
+      >
+        <ChevronRight size={16} />
+      </button>
+    </div>
+  );
+
   return (
     <section className="py-10 bg-[var(--bg)] border-t border-[var(--border)]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-5">
-          <div>
-            <h2 className="text-lg font-bold text-[var(--fg)] tracking-tight">Trending Searches</h2>
-            <p className="text-sm text-[var(--fg-sec)] mt-0.5">What fans are booking right now</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => scroll(-1)}
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={() => scroll(1)}
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--border)] hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
-              aria-label="Scroll right"
-            >
-              <ChevronRight size={16} />
-            </button>
-            <Link
-              href="/search"
-              className="text-xs font-semibold uppercase tracking-wider text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors ml-2"
-            >
-              See All
-            </Link>
-          </div>
-        </div>
+        <SectionHeader
+          title="Trending Searches"
+          subtitle="What fans are booking right now"
+          href="/search"
+          icon={TrendingUp}
+          rightAction={scrollButtons}
+        />
 
         {/* Horizontal scroll row */}
         <div

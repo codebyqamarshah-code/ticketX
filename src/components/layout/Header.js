@@ -69,7 +69,7 @@ function SearchOverlay({ onClose }) {
       >
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-3">
-            <Search size={20} className="text-[var(--fg-sec)] shrink-0" />
+            <Search size={18} className="text-[var(--fg-sec)] shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -77,7 +77,7 @@ function SearchOverlay({ onClose }) {
               onChange={handleQueryChange}
               onKeyDown={handleKey}
               placeholder="Search events, artists, venues, cities..."
-              className="flex-1 text-lg bg-transparent text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none"
+              className="flex-1 text-base bg-transparent text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none font-medium"
             />
             {query && (
               <button
@@ -85,12 +85,12 @@ function SearchOverlay({ onClose }) {
                 className="p-1 rounded-full hover:bg-[var(--bg-sec)]"
                 aria-label="Clear search query"
               >
-                <X size={18} className="text-[var(--fg-sec)] hover:text-[var(--fg)]" />
+                <X size={16} className="text-[var(--fg-sec)] hover:text-[var(--fg)]" />
               </button>
             )}
             <button
               onClick={onClose}
-              className="ml-2 text-sm text-[var(--fg-sec)] hover:text-[var(--fg)] font-semibold px-2 py-1 rounded"
+              className="ml-2 text-xs font-bold text-[var(--fg-sec)] hover:text-[var(--fg)] px-2.5 py-1 rounded-lg hover:bg-[var(--bg-sec)]"
             >
               Cancel
             </button>
@@ -117,7 +117,7 @@ function SearchOverlay({ onClose }) {
               <Link
                 href={`/search?q=${encodeURIComponent(query)}`}
                 onClick={onClose}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-[var(--fg)] hover:bg-[var(--bg-sec)] rounded-xl transition-colors mt-2 border-t border-[var(--border)] pt-3"
+                className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[var(--fg)] hover:bg-[var(--bg-sec)] rounded-xl transition-colors mt-2 border-t border-[var(--border)] pt-3"
               >
                 <span>See all results for &quot;{query}&quot;</span>
                 <ArrowRight size={14} />
@@ -128,13 +128,13 @@ function SearchOverlay({ onClose }) {
           {/* Popular searches when empty */}
           {!query && (
             <div className="mt-5 pt-4 border-t border-[var(--border)]">
-              <p className="text-xs uppercase tracking-widest text-[var(--fg-sec)] font-bold mb-3">Popular Searches</p>
+              <p className="text-[10px] uppercase tracking-widest text-[var(--fg-sec)] font-bold mb-2.5">Popular Searches</p>
               <div className="flex flex-wrap gap-2">
                 {['Taylor Swift', 'NBA', 'WWE', 'Hamilton', 'Drake', 'Coachella'].map((s) => (
                   <button
                     key={s}
                     onClick={() => { setQuery(s); setResults(searchEvents(s).slice(0, 6)); }}
-                    className="text-xs font-medium px-3.5 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-sec)] text-[var(--fg-sec)] hover:text-[var(--fg)] hover:border-[var(--fg-sec)] transition-all"
+                    className="text-xs font-semibold px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--bg-sec)] text-[var(--fg-sec)] hover:text-[var(--fg)] hover:border-[var(--fg-sec)] transition-all"
                   >
                     {s}
                   </button>
@@ -169,14 +169,14 @@ function MobileMenu({ onClose }) {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
-        <Logo onClick={onClose} width={130} height={36} />
+        <Logo onClick={onClose} width={140} height={38} />
         <button onClick={onClose} className="p-2 rounded-full hover:bg-[var(--bg-sec)] transition-colors" aria-label="Close menu">
-          <X size={22} className="text-[var(--fg)]" />
+          <X size={20} className="text-[var(--fg)]" />
         </button>
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 overflow-y-auto px-5 py-6 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-5 py-5 space-y-1">
         {NAV_LINKS.map((link, i) => (
           <motion.div
             key={link.href}
@@ -187,26 +187,26 @@ function MobileMenu({ onClose }) {
             <Link
               href={link.href}
               onClick={onClose}
-              className="flex items-center justify-between py-4 text-lg font-bold text-[var(--fg)] border-b border-[var(--border)] hover:text-[var(--fg-sec)] transition-colors"
+              className="flex items-center justify-between py-3.5 text-base font-bold text-[var(--fg)] border-b border-[var(--border)] hover:text-[var(--fg-sec)] transition-colors"
             >
               {link.label}
-              <ArrowRight size={18} className="text-[var(--fg-sec)]" />
+              <ArrowRight size={16} className="text-[var(--fg-sec)]" />
             </Link>
           </motion.div>
         ))}
 
-        <div className="pt-4 space-y-1">
-          <Link href="/help" onClick={onClose} className="flex items-center justify-between py-3 text-sm font-semibold text-[var(--fg-sec)]">
+        <div className="pt-3 space-y-1">
+          <Link href="/help" onClick={onClose} className="flex items-center justify-between py-3 text-xs font-semibold text-[var(--fg-sec)]">
             Help & Support
           </Link>
-          <Link href="/sell" onClick={onClose} className="flex items-center justify-between py-3 text-sm font-semibold text-[var(--fg-sec)]">
+          <Link href="/sell" onClick={onClose} className="flex items-center justify-between py-3 text-xs font-semibold text-[var(--fg-sec)]">
             Sell Tickets
           </Link>
         </div>
       </nav>
 
       {/* Footer actions */}
-      <div className="px-5 py-6 border-t border-[var(--border)] space-y-3">
+      <div className="px-5 py-5 border-t border-[var(--border)] space-y-3">
         {isAuthenticated ? (
           <div className="space-y-2">
             <Link
@@ -214,7 +214,7 @@ function MobileMenu({ onClose }) {
               onClick={onClose}
               className="flex items-center gap-3 py-3 px-4 rounded-xl border border-[var(--border)] bg-[var(--bg-sec)] text-sm font-bold text-[var(--fg)]"
             >
-              <User size={18} />
+              <User size={16} />
               <span>My Account ({user?.firstName})</span>
             </Link>
             <button
@@ -287,14 +287,14 @@ export default function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'py-2.5 bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--border)] shadow-sm shadow-black/5'
-            : 'py-3.5 bg-[var(--bg)] border-b border-[var(--border)]'
+            ? 'py-2 bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--border)] shadow-sm shadow-black/5'
+            : 'py-2.5 md:py-3 bg-[var(--bg)] border-b border-[var(--border)]'
         }`}
       >
         <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* LEFT: Logo + Nav links */}
           <div className="flex items-center gap-6 lg:gap-8">
-            <Logo width={140} height={38} />
+            <Logo width={145} height={38} />
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
@@ -302,7 +302,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3.5 py-2 rounded-full text-sm font-semibold transition-all duration-200 hover:bg-[var(--bg-sec)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg-sec)] ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 hover:bg-[var(--bg-sec)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg-sec)] ${
                     pathname === link.href
                       ? 'text-[var(--fg)] bg-[var(--bg-sec)]'
                       : 'text-[var(--fg-sec)] hover:text-[var(--fg)]'
@@ -319,7 +319,7 @@ export default function Header() {
             {/* Help link */}
             <Link
               href="/help"
-              className="hidden xl:inline-flex items-center text-xs font-semibold text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors px-2 py-1"
+              className="hidden xl:inline-flex items-center text-[11px] font-bold uppercase tracking-wider text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors px-2 py-1"
             >
               Help
             </Link>
@@ -327,7 +327,7 @@ export default function Header() {
             {/* Sell Tickets link */}
             <Link
               href="/sell"
-              className="hidden xl:inline-flex items-center text-xs font-semibold text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors px-2 py-1"
+              className="hidden xl:inline-flex items-center text-[11px] font-bold uppercase tracking-wider text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors px-2 py-1"
             >
               Sell Tickets
             </Link>
@@ -335,10 +335,10 @@ export default function Header() {
             {/* Search button */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center justify-center w-9 h-9 rounded-full text-[var(--fg-sec)] hover:text-[var(--fg)] hover:bg-[var(--bg-sec)] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg-sec)]"
+              className="flex items-center justify-center w-8.5 h-8.5 rounded-full text-[var(--fg-sec)] hover:text-[var(--fg)] hover:bg-[var(--bg-sec)] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg-sec)]"
               aria-label="Search events"
             >
-              <Search size={18} />
+              <Search size={17} />
             </button>
 
             {/* Location selector */}
@@ -349,19 +349,19 @@ export default function Header() {
             {/* Favorites */}
             <Link
               href="/account/favorites"
-              className="hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
+              className="hidden md:flex items-center justify-center w-8.5 h-8.5 rounded-full hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
               aria-label="Favorites"
             >
-              <Heart size={18} />
+              <Heart size={17} />
             </Link>
 
             {/* Watchlist */}
             <Link
               href="/account/watchlist"
-              className="hidden md:flex items-center justify-center w-9 h-9 rounded-full hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
+              className="hidden md:flex items-center justify-center w-8.5 h-8.5 rounded-full hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg-sec)] hover:text-[var(--fg)]"
               aria-label="Watchlist"
             >
-              <Bookmark size={18} />
+              <Bookmark size={17} />
             </Link>
 
             {/* Theme toggle */}
@@ -370,14 +370,14 @@ export default function Header() {
             </div>
 
             {/* Divider */}
-            <div className="hidden md:block w-px h-5 bg-[var(--border)] mx-1" />
+            <div className="hidden md:block w-px h-5 bg-[var(--border)] mx-0.5" />
 
             {/* Auth section */}
             {isAuthenticated ? (
               <div className="relative hidden md:block" ref={userMenuRef}>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-sec)] hover:border-[var(--fg-sec)] transition-all"
+                  className="flex items-center gap-1.5 pl-2 pr-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-sec)] hover:border-[var(--fg-sec)] transition-all"
                 >
                   <div className="w-6 h-6 rounded-full overflow-hidden relative bg-[var(--border)] shrink-0">
                     {user?.avatar ? (
@@ -386,10 +386,10 @@ export default function Header() {
                       <User size={14} className="m-auto text-[var(--fg-sec)]" />
                     )}
                   </div>
-                  <span className="text-xs font-bold text-[var(--fg)] max-w-[100px] truncate">
+                  <span className="text-xs font-bold text-[var(--fg)] max-w-[90px] truncate">
                     {user?.firstName || 'Account'}
                   </span>
-                  <ChevronDown size={14} className="text-[var(--fg-sec)]" />
+                  <ChevronDown size={12} className="text-[var(--fg-sec)]" />
                 </button>
 
                 {/* Dropdown menu */}
@@ -466,14 +466,14 @@ export default function Header() {
               <>
                 <Link
                   href="/signin"
-                  className="hidden md:flex items-center gap-1 text-sm font-semibold text-[var(--fg-sec)] hover:text-[var(--fg)] px-3 py-2 rounded-full hover:bg-[var(--bg-sec)] transition-all duration-200"
+                  className="hidden md:flex items-center gap-1 text-xs font-bold text-[var(--fg-sec)] hover:text-[var(--fg)] px-3 py-1.5 rounded-full hover:bg-[var(--bg-sec)] transition-all duration-200"
                 >
                   Sign In
                 </Link>
 
                 <Link
                   href="/signup"
-                  className="hidden md:inline-flex items-center px-5 py-2 text-xs font-bold uppercase tracking-wider bg-[var(--fg)] text-[var(--bg)] rounded-full hover:opacity-90 active:scale-95 transition-all duration-200 shadow-sm"
+                  className="hidden md:inline-flex items-center px-4 py-2 text-[11px] font-black uppercase tracking-wider bg-[var(--fg)] text-[var(--bg)] rounded-full hover:opacity-90 active:scale-95 transition-all duration-200 shadow-sm"
                 >
                   Create Account
                 </Link>
@@ -483,10 +483,10 @@ export default function Header() {
             {/* Mobile menu hamburger */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-full hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg)]"
+              className="lg:hidden flex items-center justify-center w-8.5 h-8.5 rounded-full hover:bg-[var(--bg-sec)] transition-colors text-[var(--fg)]"
               aria-label="Open menu"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
           </div>
         </div>

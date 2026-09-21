@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Search, ChevronRight, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { searchEvents, getFeaturedEvents } from '@/data/events';
+import { searchEvents } from '@/data/events';
 
 export default function HeroSection() {
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function HeroSection() {
     }
   };
 
-  // 4 Featured Cards for the Right 2x2 Grid matching reference image
+  // 4 Featured Cards for the Right 2x2 Grid with high-contrast, crystal clear imagery
   const rightGridCards = [
     {
       id: 'h1',
@@ -55,7 +55,7 @@ export default function HeroSection() {
       cta: 'Get Tickets',
       image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80',
       href: '/concerts',
-      overlay: 'bg-gradient-to-t from-black/80 via-black/30 to-black/10',
+      overlay: 'bg-gradient-to-t from-black/70 via-black/15 to-transparent',
     },
     {
       id: 'h2',
@@ -64,16 +64,16 @@ export default function HeroSection() {
       cta: 'Get Tickets',
       image: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&q=80',
       href: '/event/hamilton-broadway-ny',
-      overlay: 'bg-gradient-to-t from-black/90 via-black/40 to-black/10',
+      overlay: 'bg-gradient-to-t from-black/70 via-black/15 to-transparent',
     },
     {
       id: 'h3',
       title: 'Family Fun For Everyone',
       subtitle: 'Unforgettable Memories',
       cta: 'Explore Events',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80',
       href: '/family',
-      overlay: 'bg-gradient-to-t from-black/80 via-black/30 to-black/10',
+      overlay: 'bg-gradient-to-t from-black/60 via-black/10 to-transparent',
     },
     {
       id: 'h4',
@@ -82,7 +82,7 @@ export default function HeroSection() {
       cta: 'Get Tickets',
       image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80',
       href: '/arts-theater',
-      overlay: 'bg-gradient-to-t from-black/90 via-black/40 to-black/10',
+      overlay: 'bg-gradient-to-t from-black/70 via-black/15 to-transparent',
     },
   ];
 
@@ -99,16 +99,17 @@ export default function HeroSection() {
               transition={{ duration: 0.5 }}
               className="relative flex-1 rounded-3xl border border-[var(--border)] bg-[var(--card)] overflow-hidden p-6 md:p-10 flex flex-col justify-between min-h-[460px] md:min-h-[520px] shadow-lg"
             >
-              {/* Concert Image background right overlay — Optimized contrast for Light & Dark mode */}
-              <div className="absolute right-0 top-0 bottom-0 w-full md:w-3/5 opacity-60 dark:opacity-40 pointer-events-none overflow-hidden">
+              {/* Concert Image background right overlay — Vivid clear visibility */}
+              <div className="absolute right-0 top-0 bottom-0 w-full md:w-3/5 opacity-85 dark:opacity-75 pointer-events-none overflow-hidden">
                 <Image
                   src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80"
-                  alt="Concert Crowd"
+                  alt="Live Concert Crowd and Stage Lights"
                   fill
+                  priority
                   className="object-cover object-right"
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--card)] via-[var(--card)]/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--card)] via-[var(--card)]/40 to-transparent" />
               </div>
 
               {/* Top Headline + Subtitle */}
@@ -142,7 +143,7 @@ export default function HeroSection() {
                     onClick={() => {
                       if (query.trim()) router.push(`/search?q=${encodeURIComponent(query)}`);
                     }}
-                    className="px-6 py-2.5 bg-[var(--fg)] text-[var(--bg)] text-xs font-extrabold uppercase tracking-wider rounded-full hover:opacity-90 active:scale-95 transition-all shrink-0"
+                    className="px-6 py-2.5 bg-[var(--fg)] text-[var(--bg)] text-xs font-extrabold uppercase tracking-wider rounded-full hover:opacity-90 active:scale-95 transition-all shrink-0 cursor-pointer"
                   >
                     Search
                   </button>
@@ -181,7 +182,7 @@ export default function HeroSection() {
                     <Link
                       key={term}
                       href={`/search?q=${encodeURIComponent(term)}`}
-                      className="text-[11px] font-semibold px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--bg-sec)] text-[var(--fg-sec)] hover:text-[var(--fg)] hover:border-[var(--fg-sec)] transition-all"
+                      className="text-[11px] font-semibold px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--bg-sec)] text-[var(--fg-sec)] hover:text-[var(--fg)] hover:border-[var(--fg-sec)] transition-all cursor-pointer"
                     >
                       {term}
                     </Link>
@@ -202,7 +203,7 @@ export default function HeroSection() {
               >
                 <Link
                   href={card.href}
-                  className="group relative block rounded-3xl overflow-hidden border border-[var(--border)] bg-[var(--card)] aspect-[4/3] sm:aspect-auto sm:h-[250px] p-5 flex flex-col justify-between shadow-md hover:shadow-xl transition-all duration-300"
+                  className="group relative block rounded-3xl overflow-hidden border border-[var(--border)] bg-[var(--card)] aspect-[4/3] sm:aspect-auto sm:h-[250px] p-5 flex flex-col justify-between shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer"
                 >
                   <Image
                     src={card.image}
@@ -219,7 +220,7 @@ export default function HeroSection() {
                     <h3 className="text-base md:text-lg font-black text-white leading-tight drop-shadow-md">
                       {card.title}
                     </h3>
-                    <p className="text-xs font-semibold text-white/80 mt-1 drop-shadow">
+                    <p className="text-xs font-semibold text-white/90 mt-1 drop-shadow">
                       {card.subtitle}
                     </p>
                   </div>
