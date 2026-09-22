@@ -56,7 +56,7 @@ export default function EventDetailPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-24 sm:pt-28 md:pt-32 lg:pt-36 bg-[var(--bg)] pb-24 lg:pb-16">
+      <main className="min-h-screen pt-24 sm:pt-28 md:pt-32 lg:pt-36 bg-transparent pb-24 lg:pb-16">
         {/* Event Hero */}
         <section className="relative py-12 md:py-20 border-b border-[var(--border)] overflow-hidden bg-[var(--bg-sec)]">
           <div className="absolute inset-0 opacity-85 pointer-events-none">

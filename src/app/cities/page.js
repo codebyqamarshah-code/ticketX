@@ -13,7 +13,7 @@ export default function CitiesLandingPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-20 bg-[var(--bg)]">
+      <main className="min-h-screen pt-28 md:pt-32 bg-transparent">
         {/* Hero */}
         <section className="py-16 md:py-20 border-b border-[var(--border)] bg-[var(--bg-sec)]">
           <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">

@@ -149,10 +149,10 @@ export const discoverArticles = [
 ];
 
 export const popularCities = [
-  { id: 'los-angeles', name: 'Los Angeles', country: 'USA', image: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80', href: '/cities/los-angeles' },
+  { id: 'lahore', name: 'Lahore', country: 'Pakistan', image: 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?w=600&q=80', href: '/cities/lahore' },
+  { id: 'karachi', name: 'Karachi', country: 'Pakistan', image: 'https://images.unsplash.com/photo-1622547748225-3fc4abd2cca0?w=600&q=80', href: '/cities/karachi' },
+  { id: 'islamabad', name: 'Islamabad', country: 'Pakistan', image: 'https://images.unsplash.com/photo-1608248597560-f65518b62287?w=600&q=80', href: '/cities/islamabad' },
+  { id: 'dubai', name: 'Dubai', country: 'UAE', image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80', href: '/cities/dubai' },
+  { id: 'london', name: 'London', country: 'UK', image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&q=80', href: '/cities/london' },
   { id: 'new-york', name: 'New York', country: 'USA', image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80', href: '/cities/new-york' },
-  { id: 'las-vegas', name: 'Las Vegas', country: 'USA', image: 'https://images.unsplash.com/photo-1581351721010-8cf859cb14a4?w=600&q=80', href: '/cities/las-vegas' },
-  { id: 'chicago', name: 'Chicago', country: 'USA', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80', href: '/cities/chicago' },
-  { id: 'miami', name: 'Miami', country: 'USA', image: 'https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=600&q=80', href: '/cities/miami' },
-  { id: 'san-francisco', name: 'San Francisco', country: 'USA', image: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=600&q=80', href: '/cities/san-francisco' },
 ];

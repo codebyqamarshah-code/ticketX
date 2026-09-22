@@ -3,19 +3,22 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const POPULAR_CITIES = [
-  { id: 'los-angeles', name: 'Los Angeles', country: 'USA' },
+  { id: 'lahore', name: 'Lahore', country: 'Pakistan' },
+  { id: 'karachi', name: 'Karachi', country: 'Pakistan' },
+  { id: 'islamabad', name: 'Islamabad', country: 'Pakistan' },
+  { id: 'rawalpindi', name: 'Rawalpindi', country: 'Pakistan' },
+  { id: 'dubai', name: 'Dubai', country: 'UAE' },
+  { id: 'london', name: 'London', country: 'UK' },
+  { id: 'toronto', name: 'Toronto', country: 'Canada' },
   { id: 'new-york', name: 'New York', country: 'USA' },
+  { id: 'los-angeles', name: 'Los Angeles', country: 'USA' },
   { id: 'las-vegas', name: 'Las Vegas', country: 'USA' },
   { id: 'chicago', name: 'Chicago', country: 'USA' },
   { id: 'miami', name: 'Miami', country: 'USA' },
   { id: 'san-francisco', name: 'San Francisco', country: 'USA' },
-  { id: 'london', name: 'London', country: 'UK' },
-  { id: 'toronto', name: 'Toronto', country: 'Canada' },
-  { id: 'lahore', name: 'Lahore', country: 'Pakistan' },
-  { id: 'dubai', name: 'Dubai', country: 'UAE' },
 ];
 
-const DEFAULT_LOCATION = { city: 'New York', country: 'USA', cityId: 'new-york' };
+const DEFAULT_LOCATION = { city: 'Lahore', country: 'Pakistan', cityId: 'lahore' };
 
 function getInitialLocation() {
   if (typeof window === 'undefined') return DEFAULT_LOCATION;
@@ -29,13 +32,8 @@ function getInitialLocation() {
 const LocationContext = createContext();
 
 export function LocationProvider({ children }) {
-  const [location, setLocation] = useState(DEFAULT_LOCATION);
+  const [location, setLocation] = useState(getInitialLocation);
   const [locationStatus, setLocationStatus] = useState('idle');
-
-  useEffect(() => {
-    const initial = getInitialLocation();
-    setLocation(initial); // eslint-disable-line react-hooks/set-state-in-effect
-  }, []);
 
   const requestGeolocation = () => {
     if (!navigator.geolocation) { setLocationStatus('denied'); return; }

@@ -45,9 +45,9 @@ export const metadata = {
   creator: 'TicketX',
   publisher: 'TicketX',
   icons: {
-    icon: '/icon.svg',
-    shortcut: '/icon.svg',
-    apple: '/icon.svg',
+    icon: '/ticketxlogo.png',
+    shortcut: '/ticketxlogo.png',
+    apple: '/ticketxlogo.png',
   },
   formatDetection: {
     email: false,

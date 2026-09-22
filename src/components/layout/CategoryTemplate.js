@@ -55,9 +55,9 @@ export default function CategoryTemplate({
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-20 bg-[var(--bg)]">
+      <main className="min-h-screen pt-28 md:pt-32 bg-transparent">
         {/* Category Hero */}
-        <section className="relative py-16 md:py-24 border-b border-[var(--border)] overflow-hidden bg-[var(--bg-sec)]">
+        <section className="relative py-16 md:py-24 border-b border-[var(--border)] overflow-hidden bg-transparent">
           <div className="absolute inset-0 opacity-15 pointer-events-none">
             <Image src={heroImage} alt={title} fill className="object-cover" unoptimized />
           </div>

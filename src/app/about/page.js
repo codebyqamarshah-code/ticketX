@@ -42,7 +42,7 @@ export default function AboutPage() {
   return (
     <>
       <Header />
-      <main id="main-content" className="min-h-screen bg-[var(--bg)] pt-8 pb-20">
+      <main id="main-content" className="min-h-screen bg-transparent pt-28 md:pt-32 pb-20">
         <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
           
           {/* Hero Header */}

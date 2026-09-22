@@ -12,7 +12,7 @@ export default function CartPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-20 bg-[var(--bg)] pb-16">
+      <main className="min-h-screen pt-28 md:pt-32 bg-transparent pb-16">
         <section className="py-12">
           <div className="max-w-[1200px] mx-auto px-4 md:px-6">
             <div className="flex items-center justify-between mb-8">
