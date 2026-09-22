@@ -57,7 +57,7 @@ export default function VenueSeatMap({
     }
   }, [focusedSeatId, seats]);
 
-  // Focal Point Wheel Zoom (Zooms directly into mouse hover location)
+  // Focal Point Wheel Zoom (Zooms directly into mouse hover location smoothly)
   const handleWheelZoom = useCallback((e) => {
     e.preventDefault();
     const container = containerRef.current;
@@ -67,10 +67,12 @@ export default function VenueSeatMap({
     const mouseX = e.clientX - rect.left - rect.width / 2;
     const mouseY = e.clientY - rect.top - rect.height / 2;
 
-    const delta = e.deltaY < 0 ? 0.22 : -0.22;
+    const zoomFactor = -e.deltaY * 0.002;
+    const delta = Math.min(Math.max(zoomFactor, -0.35), 0.35);
 
     setZoomLevel((prevZoom) => {
       const newZoom = Math.min(Math.max(0.7, prevZoom + delta), 3.5);
+      if (Math.abs(newZoom - prevZoom) < 0.001) return prevZoom;
       const zoomRatio = newZoom / prevZoom;
 
       setDragPosition((prevDrag) => ({
@@ -332,8 +334,8 @@ export default function VenueSeatMap({
           dragConstraints={{ left: -700, right: 700, top: -550, bottom: 550 }}
           dragElastic={0.06}
           animate={{ scale: zoomLevel, x: dragPosition.x, y: dragPosition.y }}
-          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-          className="w-full h-full origin-center flex items-center justify-center"
+          transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full h-full origin-center flex items-center justify-center will-change-transform"
         >
           {/* Hardware-Accelerated Vector SVG Canvas (1100px x 700px) */}
           <svg viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`} className="w-[1100px] h-[700px] overflow-visible select-none">
@@ -423,18 +425,6 @@ export default function VenueSeatMap({
                         : 'fill-[var(--card)]/80 stroke-[var(--border)] hover:stroke-[var(--fg-sec)] hover:fill-[var(--bg-sec)]'
                     }`}
                   />
-                  {/* Section Label Header in SVG */}
-                  <text
-                    x={sec.x + sec.width / 2}
-                    y={isOverviewMode ? sec.y + sec.height / 2 : sec.y + 14}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className={`fill-[var(--fg)] font-black uppercase tracking-wider pointer-events-none select-none ${
-                      isOverviewMode ? 'text-[11px]' : 'text-[9px] opacity-70'
-                    }`}
-                  >
-                    {sec.name}
-                  </text>
                 </g>
               );
             })}
@@ -568,6 +558,51 @@ export default function VenueSeatMap({
                         {seat.seatNumber}
                       </text>
                     )}
+                  </g>
+                );
+              })}
+            </g>
+
+            {/* 5. HIGH-CONTRAST SECTION NAME BADGES (Rendered ON TOP of seats so section names are ALWAYS 100% crisp & readable) */}
+            <g className="section-labels-layer pointer-events-none">
+              {sections.map((sec) => {
+                if (sec.isMix) return null;
+                const isSecSelected = selectedSectionId === sec.id;
+                const labelText = sec.name.toUpperCase();
+
+                const fontPx = isOverviewMode ? 12 : 9;
+                const badgeWidth = labelText.length * (fontPx * 0.65) + (isOverviewMode ? 22 : 14);
+                const badgeHeight = isOverviewMode ? 26 : 18;
+                const badgeX = sec.x + sec.width / 2 - badgeWidth / 2;
+                const badgeY = isOverviewMode ? sec.y + sec.height / 2 - badgeHeight / 2 : sec.y + 6;
+
+                return (
+                  <g key={`sec-badge-${sec.id}`}>
+                    {/* High Contrast Background Pill */}
+                    <rect
+                      x={badgeX}
+                      y={badgeY}
+                      width={badgeWidth}
+                      height={badgeHeight}
+                      rx={badgeHeight / 2}
+                      className={
+                        isSecSelected
+                          ? 'fill-[var(--fg)] stroke-[var(--bg)] stroke-2 shadow-lg'
+                          : 'fill-[var(--card)] stroke-[var(--border)] stroke-1 shadow-md'
+                      }
+                    />
+                    {/* Section Name Text */}
+                    <text
+                      x={sec.x + sec.width / 2}
+                      y={badgeY + badgeHeight / 2 + 0.5}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className={`font-black uppercase tracking-wider select-none ${
+                        isSecSelected ? 'fill-[var(--bg)]' : 'fill-[var(--fg)]'
+                      } ${isOverviewMode ? 'text-[12px]' : 'text-[9px]'}`}
+                    >
+                      {labelText}
+                    </text>
                   </g>
                 );
               })}
