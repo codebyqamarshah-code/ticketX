@@ -10,6 +10,7 @@ import { getEventBySlug } from '@/data/events';
 import { generateEventSeatMap, findBestAvailableSeats } from '@/lib/ticketInventory';
 import { useCart } from '@/context/CartContext';
 import { useBooking } from '@/context/BookingContext';
+import { useAuth } from '@/context/AuthContext';
 import { calculateOrderTotal } from '@/lib/pricing';
 import Link from 'next/link';
 import {
@@ -151,11 +152,17 @@ export default function TicketSelectionPage() {
     setDrawerOpen(true);
   };
 
+  const { isAuthenticated } = useAuth();
+
   // Checkout Handler
   const handleProceedToCheckout = () => {
     if (selectedSeats.length === 0) return;
     handleAddToCart();
-    router.push('/checkout');
+    if (!isAuthenticated) {
+      router.push('/signin?redirect=/checkout&msg=booking');
+    } else {
+      router.push('/checkout');
+    }
   };
 
   return (

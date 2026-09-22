@@ -6,12 +6,15 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { useCart } from '@/context/CartContext';
 import { useBooking } from '@/context/BookingContext';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { ShieldCheck, Lock, CreditCard, CheckCircle2, AlertCircle, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { user, isAuthenticated, loading } = useAuth();
   const { cart, pricing, clearCart } = useCart();
   const { createOrder } = useBooking();
 
@@ -20,20 +23,27 @@ export default function CheckoutPage() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
     country: 'USA',
     address: '',
-    city: '',
+    city: user?.city || '',
     state: '',
     postalCode: '',
-    cardName: '',
+    cardName: user ? `${user.firstName} ${user.lastName}` : '',
     cardNumber: '',
     cardExp: '',
     cardCvv: '',
   });
+
+  // Redirect to Sign In if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push('/signin?redirect=/checkout&msg=booking');
+    }
+  }, [loading, isAuthenticated, router]);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
