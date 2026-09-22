@@ -3,18 +3,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-// 10 Moving Head Stage Floor Spotlights Shooting EXCLUSIVELY from Bottom to Top
+// 8 Moving Head Stage Floor Spotlights Shooting EXCLUSIVELY from Bottom to Top (Spacious Layout)
 const SPOTLIGHTS = [
-  { id: 1, left: '3%', bottomWidth: '26px', topWidth: '340px', height: '230vh', coreVar: 'var(--beam-1-core)', auraVar: 'var(--beam-1-aura)', animationClass: 'animate-spotlight-sweep-1', blurCore: '14px', blurAura: '54px' },
-  { id: 2, left: '13%', bottomWidth: '32px', topWidth: '400px', height: '240vh', coreVar: 'var(--beam-2-core)', auraVar: 'var(--beam-2-aura)', animationClass: 'animate-spotlight-sweep-2', blurCore: '18px', blurAura: '62px' },
-  { id: 3, left: '23%', bottomWidth: '22px', topWidth: '320px', height: '225vh', coreVar: 'var(--beam-3-core)', auraVar: 'var(--beam-3-aura)', animationClass: 'animate-spotlight-sweep-3', blurCore: '12px', blurAura: '46px' },
-  { id: 4, left: '34%', bottomWidth: '28px', topWidth: '380px', height: '235vh', coreVar: 'var(--beam-4-core)', auraVar: 'var(--beam-4-aura)', animationClass: 'animate-spotlight-sweep-4', blurCore: '16px', blurAura: '56px' },
-  { id: 5, left: '45%', bottomWidth: '34px', topWidth: '420px', height: '250vh', coreVar: 'var(--beam-5-core)', auraVar: 'var(--beam-5-aura)', animationClass: 'animate-spotlight-sweep-5', blurCore: '18px', blurAura: '64px' },
-  { id: 6, left: '56%', bottomWidth: '34px', topWidth: '420px', height: '250vh', coreVar: 'var(--beam-6-core)', auraVar: 'var(--beam-6-aura)', animationClass: 'animate-spotlight-sweep-6', blurCore: '18px', blurAura: '64px' },
-  { id: 7, left: '67%', bottomWidth: '28px', topWidth: '380px', height: '235vh', coreVar: 'var(--beam-7-core)', auraVar: 'var(--beam-7-aura)', animationClass: 'animate-spotlight-sweep-7', blurCore: '16px', blurAura: '56px' },
-  { id: 8, left: '77%', bottomWidth: '22px', topWidth: '330px', height: '225vh', coreVar: 'var(--beam-8-core)', auraVar: 'var(--beam-8-aura)', animationClass: 'animate-spotlight-sweep-8', blurCore: '12px', blurAura: '48px' },
-  { id: 9, left: '87%', bottomWidth: '32px', topWidth: '410px', height: '240vh', coreVar: 'var(--beam-1-core)', auraVar: 'var(--beam-1-aura)', animationClass: 'animate-spotlight-sweep-2', blurCore: '18px', blurAura: '62px' },
-  { id: 10, left: '97%', bottomWidth: '26px', topWidth: '340px', height: '230vh', coreVar: 'var(--beam-3-core)', auraVar: 'var(--beam-3-aura)', animationClass: 'animate-spotlight-sweep-1', blurCore: '14px', blurAura: '54px' },
+  { id: 1, left: '4%', bottomWidth: '26px', topWidth: '350px', height: '230vh', coreVar: 'var(--beam-1-core)', auraVar: 'var(--beam-1-aura)', animationClass: 'animate-spotlight-sweep-1', blurCore: '14px', blurAura: '54px' },
+  { id: 2, left: '17%', bottomWidth: '32px', topWidth: '420px', height: '240vh', coreVar: 'var(--beam-2-core)', auraVar: 'var(--beam-2-aura)', animationClass: 'animate-spotlight-sweep-2', blurCore: '18px', blurAura: '62px' },
+  { id: 3, left: '30%', bottomWidth: '22px', topWidth: '330px', height: '225vh', coreVar: 'var(--beam-3-core)', auraVar: 'var(--beam-3-aura)', animationClass: 'animate-spotlight-sweep-3', blurCore: '12px', blurAura: '46px' },
+  { id: 4, left: '43%', bottomWidth: '28px', topWidth: '390px', height: '235vh', coreVar: 'var(--beam-4-core)', auraVar: 'var(--beam-4-aura)', animationClass: 'animate-spotlight-sweep-4', blurCore: '16px', blurAura: '56px' },
+  { id: 5, left: '56%', bottomWidth: '28px', topWidth: '390px', height: '235vh', coreVar: 'var(--beam-5-core)', auraVar: 'var(--beam-5-aura)', animationClass: 'animate-spotlight-sweep-5', blurCore: '16px', blurAura: '56px' },
+  { id: 6, left: '69%', bottomWidth: '22px', topWidth: '330px', height: '225vh', coreVar: 'var(--beam-6-core)', auraVar: 'var(--beam-6-aura)', animationClass: 'animate-spotlight-sweep-6', blurCore: '12px', blurAura: '46px' },
+  { id: 7, left: '82%', bottomWidth: '32px', topWidth: '420px', height: '240vh', coreVar: 'var(--beam-7-core)', auraVar: 'var(--beam-7-aura)', animationClass: 'animate-spotlight-sweep-7', blurCore: '18px', blurAura: '62px' },
+  { id: 8, left: '95%', bottomWidth: '26px', topWidth: '350px', height: '230vh', coreVar: 'var(--beam-8-core)', auraVar: 'var(--beam-8-aura)', animationClass: 'animate-spotlight-sweep-8', blurCore: '14px', blurAura: '54px' },
 ];
 
 export default function GlobalAmbientBackground() {
