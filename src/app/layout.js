@@ -44,6 +44,11 @@ export const metadata = {
   authors: [{ name: 'TicketX Team' }],
   creator: 'TicketX',
   publisher: 'TicketX',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
   formatDetection: {
     email: false,
     address: false,

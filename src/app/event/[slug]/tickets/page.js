@@ -168,7 +168,7 @@ export default function TicketSelectionPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-20 bg-[var(--bg)] pb-28 lg:pb-16">
+      <main className="min-h-screen pt-24 sm:pt-28 md:pt-32 lg:pt-36 bg-[var(--bg)] pb-28 lg:pb-16">
         {/* Header Strip */}
         <section className="py-4 border-b border-[var(--border)] bg-[var(--bg-sec)]">
           <div className="max-w-[1650px] mx-auto px-4 md:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-4">

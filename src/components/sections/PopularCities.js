@@ -8,7 +8,7 @@ import { Globe } from 'lucide-react';
 
 export default function PopularCities() {
   return (
-    <section className="py-14 bg-[var(--bg-sec)] border-t border-[var(--border)]">
+    <section className="py-14 bg-transparent border-t border-[var(--border)]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
         <SectionHeader
           title="Popular Cities"

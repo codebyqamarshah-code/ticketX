@@ -29,7 +29,7 @@ export default function PopularNearYou() {
     .slice(0, 4);
 
   return (
-    <section className="py-14 bg-[var(--bg)]">
+    <section className="py-14 bg-transparent">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
         <SectionHeader
           title="Popular Near You"

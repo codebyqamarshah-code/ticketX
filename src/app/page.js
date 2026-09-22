@@ -10,6 +10,7 @@ import PopularNearYou from '@/components/sections/PopularNearYou';
 import CategorySection from '@/components/sections/CategorySection';
 import { EntertainmentGuides, DiscoverMore } from '@/components/sections/EditorialSections';
 import PopularCities from '@/components/sections/PopularCities';
+import AnimatedSection from '@/components/common/AnimatedSection';
 import { Trophy, Palette, Heart } from 'lucide-react';
 
 export default function HomePage() {
@@ -17,63 +18,80 @@ export default function HomePage() {
     <>
       <Header />
       <main id="main-content" className="bg-transparent">
-        {/* 1. Header is rendered above */}
-
-        {/* 2. Hero */}
+        {/* 1. Hero Section */}
         <HeroSection />
 
-        {/* 3. Trending Searches */}
-        <TrendingSearches />
+        {/* 2. Trending Searches */}
+        <AnimatedSection direction="up" delay={0.1}>
+          <TrendingSearches />
+        </AnimatedSection>
 
-        {/* 4. Happening This Weekend */}
-        <HappeningThisWeekend />
+        {/* 3. Happening This Weekend */}
+        <AnimatedSection direction="up">
+          <HappeningThisWeekend />
+        </AnimatedSection>
 
-        {/* 5. TicketX+ */}
-        <TicketXPlusBanner />
+        {/* 4. TicketX+ */}
+        <AnimatedSection direction="up" scale={true}>
+          <TicketXPlusBanner />
+        </AnimatedSection>
 
-        {/* 6. Popular Near You */}
-        <PopularNearYou />
+        {/* 5. Popular Near You */}
+        <AnimatedSection direction="up">
+          <PopularNearYou />
+        </AnimatedSection>
 
-        {/* 7. Sports */}
-        <div className="bg-[var(--bg-sec)]/50 border-t border-[var(--border)]">
-          <CategorySection
-            category="sports"
-            title="Sports"
-            href="/sports"
-            icon={Trophy}
-          />
-        </div>
+        {/* 6. Sports */}
+        <AnimatedSection direction="up">
+          <div className="bg-transparent border-t border-[var(--border)]">
+            <CategorySection
+              category="sports"
+              title="Sports"
+              href="/sports"
+              icon={Trophy}
+            />
+          </div>
+        </AnimatedSection>
 
-        {/* 8. Arts, Theater & Comedy */}
-        <div className="bg-transparent border-t border-[var(--border)]">
-          <CategorySection
-            category="arts-theater"
-            title="Arts, Theater & Comedy"
-            href="/arts-theater"
-            icon={Palette}
-          />
-        </div>
+        {/* 7. Arts, Theater & Comedy */}
+        <AnimatedSection direction="up">
+          <div className="bg-transparent border-t border-[var(--border)]">
+            <CategorySection
+              category="arts-theater"
+              title="Arts, Theater & Comedy"
+              href="/arts-theater"
+              icon={Palette}
+            />
+          </div>
+        </AnimatedSection>
 
-        {/* 9. Family */}
-        <div className="bg-[var(--bg-sec)]/50 border-t border-[var(--border)]">
-          <CategorySection
-            category="family"
-            title="Family"
-            href="/family"
-            icon={Heart}
-          />
-        </div>
+        {/* 8. Family */}
+        <AnimatedSection direction="up">
+          <div className="bg-transparent border-t border-[var(--border)]">
+            <CategorySection
+              category="family"
+              title="Family"
+              href="/family"
+              icon={Heart}
+            />
+          </div>
+        </AnimatedSection>
 
-        {/* 10. Entertainment Guides */}
-        <EntertainmentGuides />
+        {/* 9. Entertainment Guides */}
+        <AnimatedSection direction="up">
+          <EntertainmentGuides />
+        </AnimatedSection>
 
-        {/* 11. Discover More */}
-        <DiscoverMore />
+        {/* 10. Discover More */}
+        <AnimatedSection direction="up">
+          <DiscoverMore />
+        </AnimatedSection>
 
-        {/* 12. Popular Cities */}
-        <PopularCities />
+        {/* 11. Popular Cities */}
+        <AnimatedSection direction="up">
+          <PopularCities />
+        </AnimatedSection>
       </main>
-      {/* 13. Footer */}
       <Footer />
     </>
   );

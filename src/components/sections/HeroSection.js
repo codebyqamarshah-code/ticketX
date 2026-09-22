@@ -87,7 +87,7 @@ export default function HeroSection() {
   ];
 
   return (
-    <section className="relative bg-[var(--bg)] pt-24 pb-12 md:pt-28 md:pb-16 overflow-hidden">
+    <section className="relative bg-transparent pt-28 pb-12 sm:pt-32 md:pt-36 lg:pt-40 md:pb-16 overflow-hidden">
       <div className="max-w-[1650px] mx-auto px-4 md:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-6 items-stretch">
 

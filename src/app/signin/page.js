@@ -7,7 +7,8 @@ import Footer from '@/components/layout/Footer';
 import Logo from '@/components/ui/Logo';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
-import { Eye, EyeOff, Lock, Mail, ArrowRight, CheckCircle2, Ticket, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight, CheckCircle2, Ticket, AlertCircle, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function SignInForm() {
   const router = useRouter();
@@ -22,128 +23,229 @@ function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrorMsg('');
 
     if (!email || !password) {
-      setErrorMsg('Please fill in both email and password.');
+      setErrorMsg('Please enter both your email address and password.');
       return;
     }
 
-    const res = signIn(email, password);
-    if (!res.success) {
-      setErrorMsg(res.message || 'Invalid login details.');
-      return;
-    }
+    setLoading(true);
 
-    setSuccess(true);
     setTimeout(() => {
-      router.push(redirectUrl);
-    }, 600);
+      const res = signIn(email, password);
+      setLoading(false);
+
+      if (!res.success) {
+        setErrorMsg(res.message || 'Invalid login details. Please try again.');
+        return;
+      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        router.push(redirectUrl);
+      }, 600);
+    }, 450);
   };
 
   return (
-    <div className="w-full max-w-md p-8 rounded-3xl border border-[var(--border)] bg-[var(--card)] shadow-2xl space-y-6 my-12">
-      {/* Header Info */}
-      <div className="text-center space-y-2">
-        <Logo width={150} height={40} className="mx-auto" />
-        <h1 className="text-2xl font-black text-[var(--fg)] tracking-tight pt-2">Welcome Back</h1>
-        <p className="text-xs text-[var(--fg-sec)]">
-          {isBookingRedirect
-            ? 'Sign in to your TicketX account to complete your ticket booking.'
-            : 'Sign in to access your tickets, orders, and saved events.'}
-        </p>
-      </div>
+    <div className="relative w-full max-w-md my-12 px-4">
+      {/* Ambient background light beam effect behind card */}
+      <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 opacity-25 blur-xl animate-pulse-glow" />
 
-      {/* Booking Guard Alert Banner */}
-      {isBookingRedirect && !success && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-semibold flex items-start gap-3">
-          <Ticket size={18} className="shrink-0 mt-0.5" />
-          <div>
-            <p className="font-bold">Authentication Required</p>
-            <p className="text-[11px] opacity-90 mt-0.5">Please sign in or create an account below to select and book your tickets.</p>
-          </div>
-        </div>
-      )}
+      <motion.div
+        initial={{ opacity: 0, y: 24, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative auth-glass-card rounded-3xl p-7 sm:p-9 space-y-6 shadow-2xl border border-[var(--border)]"
+      >
+        {/* Animated Header & Brand Logo */}
+        <div className="text-center space-y-3">
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className="inline-block"
+          >
+            <Logo width={160} height={42} className="mx-auto" />
+          </motion.div>
 
-      {/* Success Banner */}
-      {success && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-xs font-bold flex items-center gap-2">
-          <CheckCircle2 size={16} /> Signed in successfully! Redirecting...
-        </div>
-      )}
-
-      {/* Error Banner */}
-      {errorMsg && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 text-xs font-semibold flex items-center gap-2">
-          <AlertCircle size={16} className="shrink-0" /> {errorMsg}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-1">
-          <label className="text-xs font-bold text-[var(--fg-sec)] uppercase">Email Address</label>
-          <div className="relative">
-            <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--fg-sec)]" />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="alex.morgan@example.com"
-              required
-              className="w-full pl-10 pr-4 py-3 text-sm rounded-xl bg-[var(--bg-sec)] border border-[var(--border)] text-[var(--fg)] focus:outline-none focus:border-[var(--fg-sec)]"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-[var(--fg-sec)] uppercase">Password</label>
-            <Link href="/forgot-password" className="text-xs text-[var(--fg-sec)] hover:text-[var(--fg)] font-semibold">
-              Forgot?
-            </Link>
-          </div>
-          <div className="relative">
-            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--fg-sec)]" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              className="w-full pl-10 pr-10 py-3 text-sm rounded-xl bg-[var(--bg-sec)] border border-[var(--border)] text-[var(--fg)] focus:outline-none focus:border-[var(--fg-sec)]"
-            />
+          {/* Animated Tab Navigation (Sign In vs Sign Up) */}
+          <div className="flex items-center justify-center p-1 rounded-2xl bg-[var(--bg-sec)] border border-[var(--border)] max-w-xs mx-auto mt-4">
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--fg-sec)] hover:text-[var(--fg)]"
+              className="flex-1 py-2 text-xs font-bold rounded-xl bg-[var(--card)] text-[var(--fg)] shadow-sm transition-all flex items-center justify-center gap-1.5"
             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              <Sparkles size={13} className="text-purple-500" /> Sign In
             </button>
+            <Link
+              href={`/signup?redirect=${encodeURIComponent(redirectUrl)}&msg=${isBookingRedirect ? 'booking' : ''}`}
+              className="flex-1 py-2 text-xs font-semibold rounded-xl text-[var(--fg-sec)] hover:text-[var(--fg)] transition-all flex items-center justify-center gap-1.5"
+            >
+              Create Account
+            </Link>
           </div>
+
+          <p className="text-xs text-[var(--fg-sec)] pt-1">
+            {isBookingRedirect
+              ? 'Sign in to your TicketX account to complete your ticket booking.'
+              : 'Sign in to access your verified tickets, orders, and saved events.'}
+          </p>
         </div>
 
-        <button
-          type="submit"
-          className="w-full py-3.5 bg-[var(--fg)] text-[var(--bg)] text-xs font-black uppercase tracking-wider rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
-        >
-          Sign In <ArrowRight size={14} />
-        </button>
-      </form>
+        {/* Booking Guard Alert Banner */}
+        <AnimatePresence>
+          {isBookingRedirect && !success && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-semibold flex items-start gap-3 shadow-sm"
+            >
+              <Ticket size={18} className="shrink-0 mt-0.5 animate-bounce" />
+              <div>
+                <p className="font-bold">Authentication Required</p>
+                <p className="text-[11px] opacity-90 mt-0.5">
+                  Please sign in or create an account below to finish booking your tickets.
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <div className="text-center pt-4 border-t border-[var(--border)]">
-        <p className="text-xs text-[var(--fg-sec)]">
-          Don&apos;t have an account?{' '}
-          <Link
-            href={`/signup?redirect=${encodeURIComponent(redirectUrl)}&msg=${isBookingRedirect ? 'booking' : ''}`}
-            className="font-bold text-[var(--fg)] hover:underline"
+        {/* Success Banner */}
+        <AnimatePresence>
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-500 text-xs font-bold flex items-center gap-2.5 shadow-sm"
+            >
+              <CheckCircle2 size={18} className="shrink-0 text-emerald-500" />
+              <span>Signed in successfully! Redirecting to checkout...</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Error Banner */}
+        <AnimatePresence>
+          {errorMsg && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="p-4 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-500 text-xs font-semibold flex items-center gap-2.5 shadow-sm"
+            >
+              <AlertCircle size={18} className="shrink-0 text-red-500" />
+              <span>{errorMsg}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Main Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email Field */}
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--fg-sec)]">
+              Email Address
+            </label>
+            <div className="relative input-focus-glow rounded-2xl transition-all">
+              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--fg-sec)]" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="alex.morgan@example.com"
+                required
+                className="w-full pl-10 pr-4 py-3.5 text-xs sm:text-sm rounded-2xl bg-[var(--bg-sec)] border border-[var(--border)] text-[var(--fg)] placeholder:text-[var(--fg-sec)]/60 focus:outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Password Field */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--fg-sec)]">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-[var(--fg-sec)] hover:text-[var(--fg)] font-semibold transition-colors"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+            <div className="relative input-focus-glow rounded-2xl transition-all">
+              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--fg-sec)]" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full pl-10 pr-11 py-3.5 text-xs sm:text-sm rounded-2xl bg-[var(--bg-sec)] border border-[var(--border)] text-[var(--fg)] placeholder:text-[var(--fg-sec)]/60 focus:outline-none transition-all"
+              />
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors p-1"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </motion.button>
+            </div>
+          </div>
+
+          {/* Animated Submit Button */}
+          <motion.button
+            type="submit"
+            disabled={loading || success}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white text-xs font-black uppercase tracking-wider rounded-2xl shadow-xl hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            Create Account
-          </Link>
-        </p>
-      </div>
+            {loading ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Signing In...
+              </span>
+            ) : (
+              <>
+                Sign In to Account <ArrowRight size={15} />
+              </>
+            )}
+          </motion.button>
+        </form>
+
+        {/* Footer Link */}
+        <div className="text-center pt-4 border-t border-[var(--border)]">
+          <p className="text-xs text-[var(--fg-sec)]">
+            Don&apos;t have a TicketX account?{' '}
+            <Link
+              href={`/signup?redirect=${encodeURIComponent(redirectUrl)}&msg=${isBookingRedirect ? 'booking' : ''}`}
+              className="font-bold text-[var(--fg)] hover:text-purple-500 transition-colors underline underline-offset-4"
+            >
+              Create Account
+            </Link>
+          </p>
+        </div>
+
+        {/* Animated Security Badges */}
+        <div className="pt-2 grid grid-cols-2 gap-2 text-[10px] text-[var(--fg-sec)]">
+          <div className="flex items-center justify-center gap-1.5 p-2 rounded-xl bg-[var(--bg-sec)] border border-[var(--border)]">
+            <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
+            <span>100% Buyer Guarantee</span>
+          </div>
+          <div className="flex items-center justify-center gap-1.5 p-2 rounded-xl bg-[var(--bg-sec)] border border-[var(--border)]">
+            <UserCheck size={14} className="text-purple-500 shrink-0" />
+            <span>Verified Fan Tickets</span>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -152,7 +254,7 @@ export default function SignInPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-20 bg-[var(--bg)] flex items-center justify-center p-4">
+      <main className="min-h-[85vh] pt-20 bg-[var(--bg)] flex items-center justify-center p-4">
         <Suspense fallback={<div className="text-center py-20 text-sm text-[var(--fg-sec)]">Loading sign in...</div>}>
           <SignInForm />
         </Suspense>

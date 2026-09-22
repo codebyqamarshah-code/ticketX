@@ -13,7 +13,7 @@ const FEATURES = [
 
 export default function TicketXPlusBanner() {
   return (
-    <section className="py-14 bg-[var(--bg)] border-y border-[var(--border)]">
+    <section className="py-14 bg-transparent border-y border-[var(--border)]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
         <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--bg-sec)]">
           {/* Subtle decorative lines */}

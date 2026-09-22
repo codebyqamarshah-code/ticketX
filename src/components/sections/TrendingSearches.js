@@ -35,7 +35,7 @@ export default function TrendingSearches() {
   );
 
   return (
-    <section className="py-10 bg-[var(--bg)] border-t border-[var(--border)]">
+    <section className="py-10 bg-transparent border-t border-[var(--border)]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
         <SectionHeader
           title="Trending Searches"

@@ -40,7 +40,7 @@ export default function VenueDetailPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen pt-20 bg-[var(--bg)]">
+      <main className="min-h-screen pt-28 md:pt-32 bg-[var(--bg)]">
         {/* Hero */}
         <section className="relative py-16 md:py-24 border-b border-[var(--border)] overflow-hidden bg-[var(--bg-sec)]">
           <div className="absolute inset-0 opacity-20 pointer-events-none">

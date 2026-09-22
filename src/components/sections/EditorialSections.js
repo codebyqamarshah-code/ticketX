@@ -10,7 +10,7 @@ import { BookOpen, Compass } from 'lucide-react';
 
 export function EntertainmentGuides() {
   return (
-    <section className="py-14 bg-[var(--bg-sec)] border-y border-[var(--border)]">
+    <section className="py-14 bg-transparent border-y border-[var(--border)]">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
         <SectionHeader
           title="Entertainment Guides"
@@ -39,7 +39,7 @@ export function EntertainmentGuides() {
 
 export function DiscoverMore() {
   return (
-    <section className="py-14 bg-[var(--bg)]">
+    <section className="py-14 bg-transparent">
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8">
         <SectionHeader
           title="Discover More"

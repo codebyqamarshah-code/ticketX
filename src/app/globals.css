@@ -275,9 +275,17 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .animate-spotlight-sweep-7 { animation: spotlightSweep7 20s ease-in-out infinite; animation-delay: 1s; }
 .animate-spotlight-sweep-8 { animation: spotlightSweep8 13s ease-in-out infinite; animation-delay: 2.5s; }
 
+/* Top Rig Downward Sweeps */
+.animate-spotlight-top-1 { animation: spotlightSweep5 16s ease-in-out infinite; animation-delay: 0.8s; }
+.animate-spotlight-top-2 { animation: spotlightSweep3 13s ease-in-out infinite; animation-delay: 2.2s; }
+.animate-spotlight-top-3 { animation: spotlightSweep1 15s ease-in-out infinite; animation-delay: 1.2s; }
+.animate-spotlight-top-4 { animation: spotlightSweep7 19s ease-in-out infinite; animation-delay: 3.5s; }
+.animate-spotlight-top-5 { animation: spotlightSweep2 14s ease-in-out infinite; animation-delay: 0.4s; }
+.animate-spotlight-top-6 { animation: spotlightSweep4 17s ease-in-out infinite; animation-delay: 2.8s; }
+
 .animate-spotlight-sweep-mobile-1 { animation: spotlightSweepMobile1 13s ease-in-out infinite; }
 .animate-spotlight-sweep-mobile-2 { animation: spotlightSweepMobile2 16s ease-in-out infinite; animation-delay: 2s; }
-.animate-spotlight-sweep-mobile-3 { animation: spotlightSweepMobile3 14s ease-in-out infinite; animation-delay: 1s; }
+.animate-spotlight-sweep-mobile-3 { animation: spotlightSweepMobile3 14s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-spotlight-sweep-1,
@@ -296,3 +304,33 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     opacity: 0.5 !important;
   }
 }
+
+/* Glassmorphism & Form Ambient Glow Helpers */
+.auth-glass-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 30px rgba(168, 85, 247, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.dark .auth-glass-card {
+  background: rgba(18, 18, 22, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(168, 85, 247, 0.15);
+}
+
+.input-focus-glow:focus-within {
+  border-color: rgba(168, 85, 247, 0.7) !important;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2), 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+@keyframes pulseGlowSlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.06); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlowSlow 6s ease-in-out infinite;
+}
+
