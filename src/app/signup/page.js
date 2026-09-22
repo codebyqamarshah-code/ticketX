@@ -71,9 +71,6 @@ function SignUpForm() {
 
   return (
     <div className="relative w-full max-w-md my-12 px-4">
-      {/* Ambient background light beam effect behind card */}
-      <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 opacity-25 blur-xl animate-pulse-glow" />
-
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -103,7 +100,7 @@ function SignUpForm() {
               type="button"
               className="flex-1 py-2 text-xs font-bold rounded-xl bg-[var(--card)] text-[var(--fg)] shadow-sm transition-all flex items-center justify-center gap-1.5"
             >
-              <Sparkles size={13} className="text-pink-500" /> Create Account
+              <Ticket size={13} className="text-[var(--fg)]" /> Create Account
             </button>
           </div>
 
@@ -258,7 +255,7 @@ function SignUpForm() {
               id="agreeTerms"
               checked={agreeTerms}
               onChange={(e) => setAgreeTerms(e.target.checked)}
-              className="mt-0.5 rounded border-[var(--border)] text-purple-600 focus:ring-0 accent-purple-600 cursor-pointer"
+              className="mt-0.5 rounded border-[var(--border)] text-[var(--fg)] focus:ring-0 accent-[var(--fg)] cursor-pointer"
             />
             <label htmlFor="agreeTerms" className="text-xs text-[var(--fg-sec)] leading-snug cursor-pointer">
               I agree to the <span className="underline text-[var(--fg)] font-semibold">Terms of Service</span> and{' '}
@@ -272,11 +269,11 @@ function SignUpForm() {
             disabled={loading}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-4 bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-500 text-white text-xs font-black uppercase tracking-wider rounded-2xl shadow-xl hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full py-4 bg-[var(--fg)] text-[var(--bg)] text-xs font-black uppercase tracking-wider rounded-2xl shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-[var(--bg)] border-t-transparent rounded-full animate-spin" />
                 Creating Account...
               </span>
             ) : (
@@ -293,7 +290,7 @@ function SignUpForm() {
             Already have a TicketX account?{' '}
             <Link
               href={`/signin?redirect=${encodeURIComponent(redirectUrl)}&msg=${isBookingRedirect ? 'booking' : ''}`}
-              className="font-bold text-[var(--fg)] hover:text-purple-500 transition-colors underline underline-offset-4"
+              className="font-bold text-[var(--fg)] hover:underline transition-colors underline-offset-4"
             >
               Sign In
             </Link>
@@ -316,7 +313,7 @@ export default function SignUpPage() {
   return (
     <>
       <Header />
-      <main className="min-h-[85vh] pt-20 bg-[var(--bg)] flex items-center justify-center p-4">
+      <main className="min-h-[85vh] pt-28 md:pt-32 bg-transparent flex items-center justify-center p-4">
         <Suspense fallback={<div className="text-center py-20 text-sm text-[var(--fg-sec)]">Loading sign up...</div>}>
           <SignUpForm />
         </Suspense>

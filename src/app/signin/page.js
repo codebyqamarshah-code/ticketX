@@ -54,9 +54,6 @@ function SignInForm() {
 
   return (
     <div className="relative w-full max-w-md my-12 px-4">
-      {/* Ambient background light beam effect behind card */}
-      <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 opacity-25 blur-xl animate-pulse-glow" />
-
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -80,7 +77,7 @@ function SignInForm() {
               type="button"
               className="flex-1 py-2 text-xs font-bold rounded-xl bg-[var(--card)] text-[var(--fg)] shadow-sm transition-all flex items-center justify-center gap-1.5"
             >
-              <Sparkles size={13} className="text-purple-500" /> Sign In
+              <Ticket size={13} className="text-[var(--fg)]" /> Sign In
             </button>
             <Link
               href={`/signup?redirect=${encodeURIComponent(redirectUrl)}&msg=${isBookingRedirect ? 'booking' : ''}`}
@@ -206,11 +203,11 @@ function SignInForm() {
             disabled={loading || success}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 text-white text-xs font-black uppercase tracking-wider rounded-2xl shadow-xl hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full py-4 bg-[var(--fg)] text-[var(--bg)] text-xs font-black uppercase tracking-wider rounded-2xl shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-[var(--bg)] border-t-transparent rounded-full animate-spin" />
                 Signing In...
               </span>
             ) : (
@@ -227,21 +224,21 @@ function SignInForm() {
             Don&apos;t have a TicketX account?{' '}
             <Link
               href={`/signup?redirect=${encodeURIComponent(redirectUrl)}&msg=${isBookingRedirect ? 'booking' : ''}`}
-              className="font-bold text-[var(--fg)] hover:text-purple-500 transition-colors underline underline-offset-4"
+              className="font-bold text-[var(--fg)] hover:underline transition-colors underline-offset-4"
             >
               Create Account
             </Link>
           </p>
         </div>
 
-        {/* Animated Security Badges */}
+        {/* Security Badges */}
         <div className="pt-2 grid grid-cols-2 gap-2 text-[10px] text-[var(--fg-sec)]">
           <div className="flex items-center justify-center gap-1.5 p-2 rounded-xl bg-[var(--bg-sec)] border border-[var(--border)]">
             <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
             <span>100% Buyer Guarantee</span>
           </div>
           <div className="flex items-center justify-center gap-1.5 p-2 rounded-xl bg-[var(--bg-sec)] border border-[var(--border)]">
-            <UserCheck size={14} className="text-purple-500 shrink-0" />
+            <UserCheck size={14} className="text-[var(--fg)] shrink-0" />
             <span>Verified Fan Tickets</span>
           </div>
         </div>

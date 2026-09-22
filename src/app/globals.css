@@ -305,24 +305,24 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   }
 }
 
-/* Glassmorphism & Form Ambient Glow Helpers */
+/* Glassmorphism & Clean Card Helpers */
 .auth-glass-card {
   background: var(--card);
   border: 1px solid var(--border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 30px rgba(168, 85, 247, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 .dark .auth-glass-card {
-  background: rgba(18, 18, 22, 0.85);
+  background: rgba(18, 18, 22, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(168, 85, 247, 0.15);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
 }
 
 .input-focus-glow:focus-within {
-  border-color: rgba(168, 85, 247, 0.7) !important;
-  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2), 0 0 20px rgba(168, 85, 247, 0.15);
+  border-color: var(--fg) !important;
+  box-shadow: 0 0 0 2px var(--border);
 }
 
 @keyframes pulseGlowSlow {
