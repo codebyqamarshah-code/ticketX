@@ -94,10 +94,10 @@ export default function GlobalAmbientBackground() {
             >
               {/* Floor Lens Glow Dot */}
               <div
-                className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full blur-[2px] z-20"
+                className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full blur-[3px] z-20 opacity-40"
                 style={{
                   background: spotlight.coreVar,
-                  boxShadow: `0 0 28px 12px ${spotlight.coreVar}`,
+                  boxShadow: `0 0 10px 3px ${spotlight.coreVar}`,
                 }}
               />
 
