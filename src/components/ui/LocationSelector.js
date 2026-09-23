@@ -43,7 +43,7 @@ export default function LocationSelector({ variant = 'header', className = '' })
         aria-haspopup="listbox"
       >
         <MapPin size={13} className="shrink-0 text-red-500" />
-        <span className="inline-block max-w-[130px] truncate">
+        <span className="inline-block max-w-[130px] truncate" suppressHydrationWarning>
           {location.city}
         </span>
         <ChevronDown size={12} className={`transition-transform duration-200 opacity-70 ${open ? 'rotate-180' : ''}`} />

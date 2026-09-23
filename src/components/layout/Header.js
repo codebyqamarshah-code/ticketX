@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
-  Search, Heart, Bookmark, User, Menu, X, ArrowRight, HelpCircle, Tag, LogOut, Ticket, ShoppingBag, Settings, ChevronDown
+  Search, Heart, Bookmark, User, Menu, X, ArrowRight, Tag, LogOut, Ticket, ShoppingBag, Settings, ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from '@/components/ui/ThemeToggle';
@@ -202,9 +202,6 @@ function MobileMenu({ onClose }) {
         ))}
 
         <div className="pt-3 space-y-1">
-          <Link href="/help" onClick={onClose} className="flex items-center justify-between py-3 text-xs font-semibold text-[var(--fg-sec)]">
-            Help & Support
-          </Link>
           <Link href="/sell" onClick={onClose} className="flex items-center justify-between py-3 text-xs font-semibold text-[var(--fg-sec)]">
             Sell Tickets
           </Link>
@@ -231,18 +228,11 @@ function MobileMenu({ onClose }) {
             </button>
           </div>
         ) : (
-          <div className="flex gap-2">
-            <Link
-              href="/signin"
-              onClick={onClose}
-              className="flex-1 py-3 text-center rounded-full border border-[var(--border)] bg-[var(--bg-sec)] text-xs font-bold text-[var(--fg)]"
-            >
-              Sign In
-            </Link>
+          <div>
             <Link
               href="/signup"
               onClick={onClose}
-              className="flex-1 py-3 text-center rounded-full bg-[var(--fg)] text-[var(--bg)] text-xs font-bold uppercase tracking-wider"
+              className="block w-full py-3 text-center rounded-full bg-[var(--fg)] text-[var(--bg)] text-xs font-bold uppercase tracking-wider"
             >
               Create Account
             </Link>
@@ -322,14 +312,6 @@ export default function Header() {
 
           {/* RIGHT: Utility actions & Auth buttons */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Help link */}
-            <Link
-              href="/help"
-              className="hidden xl:inline-flex items-center text-[11px] font-bold uppercase tracking-wider text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors px-2 py-1"
-            >
-              Help
-            </Link>
-
             {/* Sell Tickets link */}
             <Link
               href="/sell"
@@ -469,21 +451,12 @@ export default function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <>
-                <Link
-                  href="/signin"
-                  className="hidden md:flex items-center gap-1 text-xs font-bold text-[var(--fg-sec)] hover:text-[var(--fg)] px-3 py-1.5 rounded-full hover:bg-[var(--bg-sec)] transition-all duration-200"
-                >
-                  Sign In
-                </Link>
-
-                <Link
-                  href="/signup"
-                  className="hidden md:inline-flex items-center px-4 py-2 text-[11px] font-black uppercase tracking-wider bg-[var(--fg)] text-[var(--bg)] rounded-full hover:opacity-90 active:scale-95 transition-all duration-200 shadow-sm"
-                >
-                  Create Account
-                </Link>
-              </>
+              <Link
+                href="/signup"
+                className="hidden md:inline-flex items-center px-4 py-2 text-[11px] font-black uppercase tracking-wider bg-[var(--fg)] text-[var(--bg)] rounded-full hover:opacity-90 active:scale-95 transition-all duration-200 shadow-sm"
+              >
+                Create Account
+              </Link>
             )}
 
             {/* Mobile menu hamburger */}

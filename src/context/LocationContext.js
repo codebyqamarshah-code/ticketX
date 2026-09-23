@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useSyncExternalStore } from 'react';
 
 const POPULAR_CITIES = [
   { id: 'lahore', name: 'Lahore', country: 'Pakistan' },
@@ -19,44 +19,91 @@ const POPULAR_CITIES = [
 ];
 
 const DEFAULT_LOCATION = { city: 'Lahore', country: 'Pakistan', cityId: 'lahore' };
+const DEFAULT_JSON = JSON.stringify(DEFAULT_LOCATION);
 
-function getInitialLocation() {
-  if (typeof window === 'undefined') return DEFAULT_LOCATION;
-  const saved = localStorage.getItem('ticketx-location');
-  if (saved) {
-    try { return JSON.parse(saved); } catch (_) {}
+function subscribeLocation(callback) {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('storage', callback);
+  window.addEventListener('ticketx-location-change', callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener('ticketx-location-change', callback);
+  };
+}
+
+function getLocationSnapshot() {
+  if (typeof window === 'undefined') return DEFAULT_JSON;
+  try {
+    const saved = localStorage.getItem('ticketx-location');
+    return saved || DEFAULT_JSON;
+  } catch (_) {
+    return DEFAULT_JSON;
   }
-  return DEFAULT_LOCATION;
+}
+
+function getLocationServerSnapshot() {
+  return DEFAULT_JSON;
 }
 
 const LocationContext = createContext();
 
 export function LocationProvider({ children }) {
-  const [location, setLocation] = useState(getInitialLocation);
   const [locationStatus, setLocationStatus] = useState('idle');
+  const locationJson = useSyncExternalStore(
+    subscribeLocation,
+    getLocationSnapshot,
+    getLocationServerSnapshot
+  );
+
+  let location = DEFAULT_LOCATION;
+  try {
+    location = JSON.parse(locationJson);
+  } catch (_) {
+    location = DEFAULT_LOCATION;
+  }
+
+  const saveLocation = (loc) => {
+    try {
+      localStorage.setItem('ticketx-location', JSON.stringify(loc));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('ticketx-location-change'));
+      }
+    } catch (_) {}
+  };
 
   const requestGeolocation = () => {
-    if (!navigator.geolocation) { setLocationStatus('denied'); return; }
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setLocationStatus('denied');
+      return;
+    }
     setLocationStatus('loading');
     navigator.geolocation.getCurrentPosition(
       () => {
         setLocationStatus('granted');
         const loc = { city: 'Current Location', country: '', cityId: 'current' };
-        setLocation(loc);
-        localStorage.setItem('ticketx-location', JSON.stringify(loc));
+        saveLocation(loc);
       },
-      () => { setLocationStatus('denied'); }
+      () => {
+        setLocationStatus('denied');
+      }
     );
   };
 
   const selectCity = (cityObj) => {
     const loc = { city: cityObj.name, country: cityObj.country, cityId: cityObj.id };
-    setLocation(loc);
-    localStorage.setItem('ticketx-location', JSON.stringify(loc));
+    saveLocation(loc);
   };
 
   return (
-    <LocationContext.Provider value={{ location, locationStatus, requestGeolocation, selectCity, popularCities: POPULAR_CITIES }}>
+    <LocationContext.Provider
+      value={{
+        location,
+        locationStatus,
+        requestGeolocation,
+        selectCity,
+        popularCities: POPULAR_CITIES,
+      }}
+    >
       {children}
     </LocationContext.Provider>
   );
