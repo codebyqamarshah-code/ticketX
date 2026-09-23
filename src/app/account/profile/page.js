@@ -1,26 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import AccountSidebar from '@/components/account/AccountSidebar';
 import { useAuth } from '@/context/AuthContext';
-import { User, Mail, Phone, MapPin, Globe, CheckCircle2, Camera } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Globe, CheckCircle2, Camera, Trash2, Upload } from 'lucide-react';
 
 export default function ProfileSettingsPage() {
   const { user, updateProfile } = useAuth();
+  const fileInputRef = useRef(null);
 
   const [firstName, setFirstName] = useState(user?.firstName || '');
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState(user?.phone || '(555) 234-5678');
-  const [city, setCity] = useState(user?.city || 'Los Angeles');
-  const [country, setCountry] = useState(user?.country || 'USA');
-  const [avatar, setAvatar] = useState(user?.avatar || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [city, setCity] = useState(user?.city || 'Lahore');
+  const [country, setCountry] = useState(user?.country || 'Pakistan');
+  const [avatar, setAvatar] = useState(user?.avatar || null);
 
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image file size must be less than 5MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatar(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setAvatar(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,7 +55,7 @@ export default function ProfileSettingsPage() {
         phone,
         city,
         country,
-        avatar: avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80',
+        avatar: avatar || null,
       });
       setLoading(false);
       setSaved(true);
@@ -50,7 +72,7 @@ export default function ProfileSettingsPage() {
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight">Profile Settings</h1>
           <p className="text-xs sm:text-sm text-[var(--fg-sec)] mt-1">
-            Update your personal profile details and contact information
+            Update your personal profile details, profile picture, and contact information
           </p>
         </div>
 
@@ -67,36 +89,58 @@ export default function ProfileSettingsPage() {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Avatar Preview */}
-                <div className="flex items-center gap-5 border-b border-[var(--border)] pb-6">
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-[var(--border)] bg-[var(--bg-sec)] shrink-0">
+                {/* Avatar Preview & Upload */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 border-b border-[var(--border)] pb-6">
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-[var(--border)] bg-[var(--fg)] text-[var(--bg)] shrink-0 flex items-center justify-center shadow-md">
                     {avatar ? (
                       <Image
                         src={avatar}
-                        alt="Avatar"
+                        alt="Profile Avatar"
                         fill
                         className="object-cover"
                         unoptimized
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center font-black text-2xl text-[var(--fg-sec)]">
+                      <span className="font-black text-2xl uppercase leading-none">
                         {firstName?.[0] || 'U'}
-                      </div>
+                      </span>
                     )}
                   </div>
 
-                  <div className="space-y-2 flex-1">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[var(--fg-sec)]">
-                      Avatar Image URL
-                    </label>
-                    <input
-                      type="url"
-                      value={avatar}
-                      onChange={(e) => setAvatar(e.target.value)}
-                      placeholder="https://images.unsplash.com/..."
-                      className="w-full px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--bg-sec)] text-xs text-[var(--fg)] focus:outline-none focus:border-[var(--fg)]"
-                    />
-                    <p className="text-[10px] text-[var(--fg-sec)]">Paste a direct image web link to update your avatar.</p>
+                  <div className="space-y-3 flex-1">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--fg)]">Profile Picture</h4>
+                      <p className="text-[11px] text-[var(--fg-sec)] mt-0.5">
+                        {avatar ? 'Custom profile photo active' : 'No photo uploaded. Using initial badge avatar.'}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept="image/*"
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3.5 py-2 rounded-xl bg-[var(--fg)] text-[var(--bg)] text-xs font-bold flex items-center gap-1.5 hover:opacity-90 transition-all shadow-sm"
+                      >
+                        <Upload size={14} /> Upload Custom Photo
+                      </button>
+
+                      {avatar && (
+                        <button
+                          type="button"
+                          onClick={handleRemovePhoto}
+                          className="px-3.5 py-2 rounded-xl border border-red-500/20 text-red-500 hover:bg-red-500/10 text-xs font-bold flex items-center gap-1.5 transition-all"
+                        >
+                          <Trash2 size={14} /> Remove Photo
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 

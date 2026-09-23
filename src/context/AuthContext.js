@@ -14,7 +14,7 @@ const DEMO_USERS = [
     phone: '(555) 234-5678',
     city: 'Los Angeles',
     country: 'USA',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80',
+    avatar: null,
   },
 ];
 
@@ -66,7 +66,7 @@ export function AuthProvider({ children }) {
         phone: '',
         city: 'New York',
         country: 'USA',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80',
+        avatar: null,
       };
       
       const updatedDb = [...usersDb, newUser];
@@ -114,7 +114,7 @@ export function AuthProvider({ children }) {
       phone: '',
       city: 'Los Angeles',
       country: 'USA',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80',
+      avatar: null,
     };
 
     const updatedDb = [...usersDb, newUser];

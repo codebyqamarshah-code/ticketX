@@ -367,11 +367,13 @@ export default function Header() {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-1.5 pl-2 pr-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-sec)] hover:border-[var(--fg-sec)] transition-all"
                 >
-                  <div className="w-6 h-6 rounded-full overflow-hidden relative bg-[var(--border)] shrink-0">
+                  <div className="w-6.5 h-6.5 rounded-full overflow-hidden relative border border-[var(--border)] bg-[var(--fg)] shrink-0 flex items-center justify-center text-[var(--bg)]">
                     {user?.avatar ? (
                       <Image src={user.avatar} alt="User Avatar" fill className="object-cover" unoptimized />
                     ) : (
-                      <User size={14} className="m-auto text-[var(--fg-sec)]" />
+                      <span className="text-[11px] font-black uppercase leading-none">
+                        {user?.firstName?.[0] || 'U'}
+                      </span>
                     )}
                   </div>
                   <span className="text-xs font-bold text-[var(--fg)] max-w-[90px] truncate">

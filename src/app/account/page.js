@@ -47,7 +47,7 @@ export default function AccountDashboardPage() {
             {/* User Profile Banner */}
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[var(--border)] bg-[var(--bg-sec)] shrink-0">
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[var(--border)] bg-[var(--fg)] text-[var(--bg)] shrink-0 flex items-center justify-center shadow-md">
                   {user?.avatar ? (
                     <Image
                       src={user.avatar}
@@ -57,9 +57,9 @@ export default function AccountDashboardPage() {
                       unoptimized
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center font-black text-xl text-[var(--fg-sec)]">
+                    <span className="font-black text-2xl uppercase leading-none">
                       {user?.firstName?.[0] || 'U'}
-                    </div>
+                    </span>
                   )}
                 </div>
                 <div>
