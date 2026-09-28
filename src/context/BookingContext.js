@@ -123,9 +123,11 @@ export function BookingProvider({ children }) {
 
   const createOrder = (cartItems, customerInfo, paymentSummary, pricing) => {
     const orderId = `TX-${Math.floor(100000 + Math.random() * 900000)}`;
+    const bookedAt = new Date().toISOString();
+
     const newOrder = {
       orderId,
-      date: new Date().toISOString(),
+      date: bookedAt,
       customer: customerInfo,
       payment: paymentSummary,
       items: cartItems,
@@ -133,23 +135,42 @@ export function BookingProvider({ children }) {
       status: 'Confirmed',
     };
 
-    // Extract tickets for My Tickets page
-    const newTickets = cartItems.map((item) => ({
-      ticketId: `TKT-${Math.floor(10000 + Math.random() * 90000)}`,
-      orderId,
-      eventTitle: item.eventTitle || 'Live Event',
-      eventSlug: item.eventSlug,
-      date: item.date || 'Upcoming Date',
-      time: item.time || '7:00 PM',
-      venue: item.venue || 'Venue',
-      city: item.city || 'City',
-      section: item.sectionName || item.section || 'General',
-      row: item.row || 'Row 1',
-      seat: item.seatNumber || item.seat || 'Seat 1',
-      ticketType: item.ticketType || 'Standard Ticket',
-      price: item.price,
-      status: 'Confirmed',
-    }));
+    // Gate labels cycle through realistic gates
+    const GATES = ['Gate A · Main Entrance', 'Gate B · Entrance 2', 'Gate C · VIP Entrance', 'Gate D · Entrance 4', 'Gate E · North Stand'];
+
+    // Generate one real ticket per seat booked (handles quantity > 1)
+    const newTickets = [];
+    cartItems.forEach((item) => {
+      const qty = item.quantity || 1;
+      const baseSeat = parseInt(item.seatNumber || item.seat || 1, 10);
+
+      for (let i = 0; i < qty; i++) {
+        const seatNum = isNaN(baseSeat) ? `${item.seat || 1}` : `${baseSeat + i}`;
+        const gateIdx = Math.floor(Math.random() * GATES.length);
+        const priceNum = typeof item.price === 'number' ? item.price : parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
+
+        newTickets.push({
+          ticketId: `TKT-${Math.floor(10000 + Math.random() * 90000)}`,
+          orderId,
+          eventTitle: item.eventTitle || 'Live Event',
+          eventSlug: item.eventSlug || '',
+          category: item.category || item.ticketType || 'LIVE EVENT',
+          date: item.date || 'Upcoming Date',
+          time: item.time || '7:00 PM',
+          venue: item.venue || 'Venue TBA',
+          city: item.city || customerInfo?.city || 'City',
+          section: item.sectionName || item.section || 'General',
+          row: item.row || 'Row 1',
+          seat: seatNum,
+          ticketType: item.ticketType || 'Standard Ticket',
+          gate: item.gate || GATES[gateIdx],
+          bookedFrom: 'TicketX Primary Box Office',
+          price: `$${priceNum.toFixed(2)}`,
+          bookedAt,
+          status: 'CONFIRMED',
+        });
+      }
+    });
 
     setOrders((prev) => {
       const next = [newOrder, ...prev];

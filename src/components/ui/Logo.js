@@ -1,11 +1,30 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useTheme } from '@/context/ThemeContext';
+
+const emptySubscribe = () => () => {};
+
+// SSR-safe mount check — prevents hydration mismatch
+function useIsMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
 
 export default function Logo({ className = '', width = 210, height = 58, onClick }) {
-  const logoSrc = '/Ticketx_Logo.png';
+  const { theme } = useTheme();
+  const isMounted = useIsMounted();
+
+  // On server / first render: always use light logo so SSR HTML matches client HTML
+  // After mount: switch based on actual theme
+  const isDark = isMounted ? theme === 'dark' : false;
+  const logoSrc = isDark ? '/Ticketx_Logo_Dark.png' : '/Ticketx_Logo.png';
 
   return (
     <Link
