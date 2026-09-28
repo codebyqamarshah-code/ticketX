@@ -45,7 +45,7 @@ export const metadata = {
   creator: 'TicketX',
   publisher: 'TicketX',
   icons: {
-    icon: [{ url: '/favicon.jpg', type: 'image/jpeg' }],
+    icon: [{ url: '/Ticketx_Fab Icon.jpg.jpeg', type: 'image/jpeg' }],
     shortcut: '/favicon.jpg',
     apple: '/favicon.jpg',
   },
