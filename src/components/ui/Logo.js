@@ -17,7 +17,7 @@ function useIsMounted() {
   );
 }
 
-export default function Logo({ className = '', width = 210, height = 58, onClick }) {
+export default function Logo({ className = '', onClick }) {
   const { theme } = useTheme();
   const isMounted = useIsMounted();
 
@@ -30,7 +30,7 @@ export default function Logo({ className = '', width = 210, height = 58, onClick
     <Link
       href="/"
       onClick={onClick}
-      className={`group relative inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg-sec)] rounded-lg ${className}`}
+      className={`group relative inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fg-sec)] rounded-lg ${className}`}
       aria-label="TicketX Home"
     >
       <motion.div
@@ -43,9 +43,9 @@ export default function Logo({ className = '', width = 210, height = 58, onClick
           key={logoSrc}
           src={logoSrc}
           alt="TicketX Logo"
-          width={width}
-          height={height}
-          className="h-auto w-auto max-h-14 md:max-h-16 lg:max-h-20 object-contain transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md"
+          width={210}
+          height={58}
+          className="h-auto w-auto object-contain transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md max-h-14 md:max-h-16 lg:max-h-20"
           priority
           unoptimized
         />
