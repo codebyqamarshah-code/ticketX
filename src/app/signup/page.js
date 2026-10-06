@@ -4,8 +4,7 @@ import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+
 import Logo from '@/components/ui/Logo';
 import { ArrowRight, ShieldCheck, Ticket, User, Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, Sparkles, LockKeyhole } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -311,14 +310,10 @@ function SignUpForm() {
 
 export default function SignUpPage() {
   return (
-    <>
-      <Header />
-      <main className="min-h-[85vh] pt-28 md:pt-32 bg-transparent flex items-center justify-center p-4">
-        <Suspense fallback={<div className="text-center py-20 text-sm text-[var(--fg-sec)]">Loading sign up...</div>}>
-          <SignUpForm />
-        </Suspense>
-      </main>
-      <Footer />
-    </>
+    <main className="min-h-screen bg-transparent flex items-center justify-center p-4">
+      <Suspense fallback={<div className="text-center py-20 text-sm text-[var(--fg-sec)]">Loading sign up...</div>}>
+        <SignUpForm />
+      </Suspense>
+    </main>
   );
 }

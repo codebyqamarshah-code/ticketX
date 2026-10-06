@@ -2,8 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+
 import Logo from '@/components/ui/Logo';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -249,14 +248,10 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <>
-      <Header />
-      <main className="min-h-[85vh] pt-20 bg-[var(--bg)] flex items-center justify-center p-4">
-        <Suspense fallback={<div className="text-center py-20 text-sm text-[var(--fg-sec)]">Loading sign in...</div>}>
-          <SignInForm />
-        </Suspense>
-      </main>
-      <Footer />
-    </>
+    <main className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4">
+      <Suspense fallback={<div className="text-center py-20 text-sm text-[var(--fg-sec)]">Loading sign in...</div>}>
+        <SignInForm />
+      </Suspense>
+    </main>
   );
 }
