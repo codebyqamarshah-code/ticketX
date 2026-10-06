@@ -59,6 +59,17 @@ function SignInForm() {
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="relative auth-glass-card rounded-3xl p-7 sm:p-9 space-y-6 shadow-2xl border border-[var(--border)]"
       >
+        {/* Back to Website */}
+        <div className="flex justify-start mb-1">
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 text-xs text-[var(--fg-sec)] hover:text-[var(--fg)] transition-colors group"
+          >
+            <ArrowRight size={13} className="rotate-180 group-hover:-translate-x-0.5 transition-transform" />
+            Back to Website
+          </Link>
+        </div>
+
         {/* Animated Header & Brand Logo */}
         <div className="text-center space-y-3">
           <motion.div
