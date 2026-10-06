@@ -1,0 +1,1339 @@
+'use client';
+
+import React, { useState, useCallback } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ShieldCheck,
+  Lock,
+  User,
+  Mail,
+  Key,
+  LogOut,
+  LayoutDashboard,
+  Users,
+  Ticket,
+  ShoppingBag,
+  Settings,
+  PlusCircle,
+  Search,
+  CheckCircle2,
+  DollarSign,
+  Calendar,
+  Trash2,
+  Eye,
+  AlertTriangle,
+  ArrowUpRight,
+  TrendingUp
+} from 'lucide-react';
+import { getAllEvents } from '@/data/events';
+
+const ADMIN_CREDS_KEY = 'ticketx-admin-credentials';
+const ADMIN_SESSION_KEY = 'ticketx-admin-session';
+const CUSTOM_EVENTS_KEY = 'ticketx-custom-events';
+const USERS_DB_KEY = 'ticketx-users-db';
+const ORDERS_DB_KEY = 'ticketx-orders';
+const TICKETS_DB_KEY = 'ticketx-purchased-tickets';
+
+function getInitialAdminAccount() {
+  if (typeof window === 'undefined') return false;
+  try {
+    return !!localStorage.getItem(ADMIN_CREDS_KEY);
+  } catch (_) {
+    return false;
+  }
+}
+
+function getInitialAdminSession() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const activeSession = sessionStorage.getItem(ADMIN_SESSION_KEY) || localStorage.getItem(ADMIN_SESSION_KEY);
+    return activeSession ? JSON.parse(activeSession) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function getInitialEvents() {
+  if (typeof window === 'undefined') return [];
+  return getAllEvents();
+}
+
+function getInitialUsers() {
+  if (typeof window === 'undefined') return [];
+  try {
+    const savedUsers = localStorage.getItem(USERS_DB_KEY);
+    if (savedUsers) return JSON.parse(savedUsers);
+    const defaultUsers = [
+      {
+        id: 'usr-001',
+        firstName: 'Qamar',
+        lastName: 'Abbas',
+        email: 'jafferi2008@gmail.com',
+        phone: '+92 300 1234567',
+        city: 'Lahore',
+        country: 'Pakistan',
+        createdAt: '2026-09-01',
+        status: 'Active',
+      },
+      {
+        id: 'usr-002',
+        firstName: 'Alex',
+        lastName: 'Morgan',
+        email: 'alex.morgan@example.com',
+        phone: '+1 (555) 234-5678',
+        city: 'Los Angeles',
+        country: 'USA',
+        createdAt: '2026-09-12',
+        status: 'Active',
+      },
+    ];
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(defaultUsers));
+    return defaultUsers;
+  } catch (_) {
+    return [];
+  }
+}
+
+function getInitialOrders() {
+  if (typeof window === 'undefined') return [];
+  try {
+    const saved = localStorage.getItem(ORDERS_DB_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function getInitialTickets() {
+  if (typeof window === 'undefined') return [];
+  try {
+    const saved = localStorage.getItem(TICKETS_DB_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+export default function AdminPanelPage() {
+  // Auth state initialized safely without triggering useEffect setState warnings
+  const [hasAdminAccount, setHasAdminAccount] = useState(getInitialAdminAccount);
+  const [activeAdmin, setActiveAdmin] = useState(getInitialAdminSession);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => !!getInitialAdminSession());
+
+  // Form states (Registration & Login)
+  const [regForm, setRegForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    securityCode: '',
+    avatar: '',
+  });
+  const [loginForm, setLoginForm] = useState({
+    email: '',
+    password: '',
+  });
+  const [authError, setAuthError] = useState('');
+  const [authSuccess, setAuthSuccess] = useState('');
+
+  // Dashboard Navigation
+  const [activeTab, setActiveTab] = useState('overview');
+
+  // Data states using lazy initializers
+  const [eventsList, setEventsList] = useState(getInitialEvents);
+  const [usersList, setUsersList] = useState(getInitialUsers);
+  const [ordersList] = useState(getInitialOrders);
+  const [ticketsList] = useState(getInitialTickets);
+
+  // Filters & Search
+  const [userSearch, setUserSearch] = useState('');
+  const [eventSearch, setEventSearch] = useState('');
+  const [orderSearch, setOrderSearch] = useState('');
+
+  // Modals & Form States for Ticket Upload
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [newTicket, setNewTicket] = useState({
+    title: '',
+    category: 'concerts',
+    subcategory: 'Live Performance',
+    artist: '',
+    venue: '',
+    city: 'Lahore',
+    country: 'Pakistan',
+    date: '2026-11-15',
+    time: '08:00 PM',
+    priceFrom: 50,
+    priceTo: 250,
+    availableSeats: 500,
+    image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80',
+    description: '',
+    isFeatured: true,
+    isTrending: true,
+    isVIP: false,
+  });
+
+  // Selected Order Modal
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // Notification Banner
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = useCallback((msg, type = 'success') => {
+    setToastMessage({ msg, type });
+    setTimeout(() => setToastMessage(null), 4000);
+  }, []);
+
+  const refreshEvents = useCallback(() => {
+    setEventsList(getAllEvents());
+  }, []);
+
+  // Handle Admin One-Time Registration
+  const handleRegisterAdmin = (e) => {
+    e.preventDefault();
+    setAuthError('');
+    setAuthSuccess('');
+
+    if (!regForm.name || !regForm.email || !regForm.password) {
+      setAuthError('Please fill in all required fields.');
+      return;
+    }
+
+    if (regForm.password !== regForm.confirmPassword) {
+      setAuthError('Passwords do not match.');
+      return;
+    }
+
+    if (regForm.password.length < 6) {
+      setAuthError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    const adminData = {
+      id: 'admin-super-01',
+      name: regForm.name.trim(),
+      email: regForm.email.trim().toLowerCase(),
+      password: regForm.password,
+      role: 'Super Admin',
+      avatar: regForm.avatar || null,
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(ADMIN_CREDS_KEY, JSON.stringify(adminData));
+    sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(adminData));
+
+    setHasAdminAccount(true);
+    setActiveAdmin(adminData);
+    setIsAdminLoggedIn(true);
+    showToast('Super Admin Account registered successfully!');
+  };
+
+  // Handle Admin Login
+  const handleLoginAdmin = (e) => {
+    e.preventDefault();
+    setAuthError('');
+
+    try {
+      const savedCredsStr = localStorage.getItem(ADMIN_CREDS_KEY);
+      if (!savedCredsStr) {
+        setAuthError('No Super Admin account registered yet.');
+        return;
+      }
+
+      const savedCreds = JSON.parse(savedCredsStr);
+
+      if (
+        loginForm.email.trim().toLowerCase() === savedCreds.email.toLowerCase() &&
+        loginForm.password === savedCreds.password
+      ) {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(savedCreds));
+        setActiveAdmin(savedCreds);
+        setIsAdminLoggedIn(true);
+        showToast(`Welcome back, ${savedCreds.name}!`);
+      } else {
+        setAuthError('Invalid Admin Email or Password.');
+      }
+    } catch (err) {
+      setAuthError('Authentication error. Please try again.');
+    }
+  };
+
+  // Handle Logout
+  const handleLogout = () => {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+    setIsAdminLoggedIn(false);
+    setActiveAdmin(null);
+    showToast('Logged out from Admin Panel.', 'info');
+  };
+
+  // Upload/Create New Ticket
+  const handleCreateTicket = (e) => {
+    e.preventDefault();
+
+    if (!newTicket.title || !newTicket.artist || !newTicket.venue) {
+      alert('Please fill in title, artist/organizer, and venue name.');
+      return;
+    }
+
+    const slug = newTicket.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const createdEvent = {
+      id: `evt-${Date.now()}`,
+      slug: `${slug}-${Math.floor(Math.random() * 1000)}`,
+      title: newTicket.title,
+      category: newTicket.category,
+      subcategory: newTicket.subcategory,
+      artist: newTicket.artist,
+      artistSlug: newTicket.artist.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      description: newTicket.description || `Official tickets for ${newTicket.title} live at ${newTicket.venue}.`,
+      date: newTicket.date,
+      time: newTicket.time,
+      venue: newTicket.venue,
+      venueSlug: newTicket.venue.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      city: newTicket.city,
+      country: newTicket.country,
+      cityId: newTicket.city.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      image: newTicket.image,
+      priceFrom: Number(newTicket.priceFrom) || 50,
+      priceTo: Number(newTicket.priceTo) || 300,
+      availableSeats: Number(newTicket.availableSeats) || 500,
+      availability: 'available',
+      isFeatured: newTicket.isFeatured,
+      isTrending: newTicket.isTrending,
+      isPopular: true,
+      isNearYou: true,
+      isVIP: newTicket.isVIP,
+      isAccessible: true,
+      isResale: false,
+      tags: [newTicket.category, newTicket.city.toLowerCase()],
+      uploadedByAdmin: true,
+      uploadedAt: new Date().toISOString(),
+    };
+
+    try {
+      const existingCustomStr = localStorage.getItem(CUSTOM_EVENTS_KEY);
+      const existingCustom = existingCustomStr ? JSON.parse(existingCustomStr) : [];
+      const updatedCustom = [createdEvent, ...existingCustom];
+
+      localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(updatedCustom));
+      refreshEvents();
+      setIsUploadModalOpen(false);
+      showToast(`Ticket "${createdEvent.title}" uploaded & published live to website!`);
+    } catch (err) {
+      alert('Failed to save ticket event. Storage limit exceeded.');
+    }
+  };
+
+  // Delete Custom Event
+  const handleDeleteCustomEvent = (id) => {
+    if (!confirm('Are you sure you want to delete this ticket event?')) return;
+
+    try {
+      const existingCustomStr = localStorage.getItem(CUSTOM_EVENTS_KEY);
+      if (existingCustomStr) {
+        const existingCustom = JSON.parse(existingCustomStr);
+        const filtered = existingCustom.filter((e) => e.id !== id);
+        localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(filtered));
+        refreshEvents();
+        showToast('Event removed successfully.');
+      }
+    } catch (_) {}
+  };
+
+  // Toggle User Status (Active / Suspended)
+  const handleToggleUserStatus = (userId) => {
+    const updatedUsers = usersList.map((u) => {
+      if (u.id === userId) {
+        return {
+          ...u,
+          status: u.status === 'Active' ? 'Suspended' : 'Active',
+        };
+      }
+      return u;
+    });
+
+    setUsersList(updatedUsers);
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(updatedUsers));
+    showToast('User status updated successfully.');
+  };
+
+  // Calculations for Stats
+  const totalRevenue = ordersList.reduce((acc, order) => acc + (Number(order.total) || Number(order.paymentSummary?.total) || 0), 0);
+  const totalTicketsSold = ticketsList.length || ordersList.reduce((acc, o) => acc + (o.items ? o.items.reduce((sum, i) => sum + (i.quantity || 1), 0) : 1), 0);
+
+  // -------------------------------------------------------------
+  // RENDER: LOGIN / ONE-TIME REGISTER FORM (UNAUTHENTICATED)
+  // -------------------------------------------------------------
+  if (!isAdminLoggedIn) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
+        {/* Background glow effects */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md z-10"
+        >
+          {/* Header Logo */}
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-block mb-3">
+              <span className="text-3xl font-black tracking-tight text-white">
+                Ticket<span className="text-rose-600">X</span>
+              </span>
+            </Link>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-400">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Super Admin Authorization Portal</span>
+            </div>
+          </div>
+
+          <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl relative">
+            {/* Form Title */}
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-white">
+                {hasAdminAccount ? 'Super Admin Sign In' : 'One-Time Admin Setup'}
+              </h2>
+              <p className="text-xs text-slate-400 mt-1">
+                {hasAdminAccount
+                  ? 'Enter your registered credentials to manage the platform.'
+                  : 'Welcome! Create your primary Super Admin account to get full control.'}
+              </p>
+            </div>
+
+            {/* Error / Success Notices */}
+            {authError && (
+              <div className="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <span>{authError}</span>
+              </div>
+            )}
+            {authSuccess && (
+              <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{authSuccess}</span>
+              </div>
+            )}
+
+            {/* REGISTRATION FORM (Only if NO account exists yet) */}
+            {!hasAdminAccount ? (
+              <form onSubmit={handleRegisterAdmin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Super Admin Full Name *
+                  </label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Qamar Abbas"
+                      value={regForm.name}
+                      onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Admin Official Email *
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="admin@ticketx.com"
+                      value={regForm.email}
+                      onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Password *
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={regForm.password}
+                      onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Confirm Password *
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={regForm.confirmPassword}
+                      onChange={(e) => setRegForm({ ...regForm, confirmPassword: e.target.value })}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-sm transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Complete One-Time Admin Setup</span>
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* LOGIN FORM (Shown when account is already registered) */
+              <form onSubmit={handleLoginAdmin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Admin Email
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="admin@ticketx.com"
+                      value={loginForm.email}
+                      onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-sm transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                  >
+                    <Key className="w-4 h-4" />
+                    <span>Sign In to Admin Dashboard</span>
+                  </button>
+                </div>
+
+                <div className="text-center pt-2">
+                  <p className="text-[11px] text-slate-500">
+                    Registration is locked. Single Super Admin active.
+                  </p>
+                </div>
+              </form>
+            )}
+          </div>
+
+          <div className="text-center mt-6">
+            <Link
+              href="/"
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors inline-flex items-center gap-1"
+            >
+              ← Back to Main TicketX Website
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // RENDER: FULL SUPER ADMIN DASHBOARD (AUTHENTICATED)
+  // -------------------------------------------------------------
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
+      {/* Toast Notification Banner */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 border ${
+              toastMessage.type === 'error'
+                ? 'bg-rose-950 border-rose-800 text-rose-200'
+                : toastMessage.type === 'info'
+                ? 'bg-sky-950 border-sky-800 text-sky-200'
+                : 'bg-emerald-950 border-emerald-800 text-emerald-200'
+            }`}
+          >
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{toastMessage.msg}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ADMIN SIDEBAR */}
+      <aside className="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col justify-between shrink-0">
+        <div>
+          {/* Logo & Brand */}
+          <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-xl font-black tracking-tight text-white">
+                Ticket<span className="text-rose-600">X</span>
+              </span>
+              <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                ADMIN
+              </span>
+            </Link>
+          </div>
+
+          {/* Nav Items */}
+          <nav className="p-3 space-y-1">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                activeTab === 'overview'
+                  ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              <span>Overview & Analytics</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                activeTab === 'users'
+                  ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              <span>User Profiles ({usersList.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('tickets')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                activeTab === 'tickets'
+                  ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              }`}
+            >
+              <Ticket className="w-4 h-4" />
+              <span>Ticket & Event Upload</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('orders')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                activeTab === 'orders'
+                  ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              }`}
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>Orders & Bookings ({ordersList.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                activeTab === 'settings'
+                  ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              }`}
+            >
+              <Settings className="w-4 h-4" />
+              <span>Admin Profile & Settings</span>
+            </button>
+          </nav>
+        </div>
+
+        {/* Admin Footer Info */}
+        <div className="p-4 border-t border-slate-800 bg-slate-950/40">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
+                {activeAdmin?.name?.charAt(0).toUpperCase() || 'A'}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-white truncate">{activeAdmin?.name}</p>
+                <p className="text-[10px] text-slate-400 truncate">{activeAdmin?.role || 'Super Admin'}</p>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="w-full py-1.5 px-3 bg-slate-800 hover:bg-rose-950/60 hover:text-rose-300 text-slate-300 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* MAIN CONTENT AREA */}
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-950">
+        {/* TOP BAR */}
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800/80">
+          <div>
+            <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+              {activeTab === 'overview' && 'Dashboard Overview'}
+              {activeTab === 'users' && 'User Profiles & Access'}
+              {activeTab === 'tickets' && 'Ticket & Event Management'}
+              {activeTab === 'orders' && 'Customer Orders & Transactions'}
+              {activeTab === 'settings' && 'Admin Settings'}
+            </h1>
+            <p className="text-xs text-slate-400 mt-1">
+              Live Super Admin Control Panel · Route: <code className="bg-slate-900 px-1.5 py-0.5 rounded text-emerald-400">/adminpanel</code>
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsUploadModalOpen(true)}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Upload New Ticket</span>
+            </button>
+            <Link
+              href="/"
+              target="_blank"
+              className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-medium border border-slate-800 transition-colors flex items-center gap-1.5"
+            >
+              <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+              <span>Live Website</span>
+            </Link>
+          </div>
+        </header>
+
+        {/* TAB 1: OVERVIEW */}
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-slate-400 font-medium">Total Platform Revenue</span>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-black text-white">${totalRevenue.toLocaleString()}</h3>
+                <span className="text-[10px] text-emerald-400 font-medium mt-1 inline-flex items-center gap-0.5">
+                  <TrendingUp className="w-3 h-3" /> Live primary box office sales
+                </span>
+              </div>
+
+              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-slate-400 font-medium">Tickets Sold</span>
+                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                    <Ticket className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-black text-white">{totalTicketsSold}</h3>
+                <span className="text-[10px] text-slate-400 font-medium mt-1">Confirmed ticket seats issued</span>
+              </div>
+
+              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-slate-400 font-medium">Active User Profiles</span>
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                    <Users className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-black text-white">{usersList.length}</h3>
+                <span className="text-[10px] text-indigo-400 font-medium mt-1">Registered members</span>
+              </div>
+
+              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-slate-400 font-medium">Live Events & Listings</span>
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-black text-white">{eventsList.length}</h3>
+                <span className="text-[10px] text-amber-400 font-medium mt-1">Available across categories</span>
+              </div>
+            </div>
+
+            {/* Quick Actions & Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <ShoppingBag className="w-4 h-4 text-emerald-400" />
+                    <span>Recent Ticket Orders</span>
+                  </h3>
+                  <button
+                    onClick={() => setActiveTab('orders')}
+                    className="text-xs text-emerald-400 hover:underline font-medium"
+                  >
+                    View All Orders →
+                  </button>
+                </div>
+
+                {ordersList.length === 0 ? (
+                  <div className="text-center py-8 border border-dashed border-slate-800 rounded-xl">
+                    <ShoppingBag className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                    <p className="text-xs text-slate-400">No ticket orders placed yet.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {ordersList.slice(0, 5).map((order) => (
+                      <div
+                        key={order.orderId || order.id}
+                        className="p-3 bg-slate-950/60 border border-slate-800/80 rounded-xl flex items-center justify-between text-xs"
+                      >
+                        <div>
+                          <p className="font-semibold text-white">Order #{order.orderId || order.id}</p>
+                          <p className="text-slate-400 text-[11px]">{order.customerInfo?.email || order.email || 'Customer'}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-emerald-400">${order.total || order.paymentSummary?.total || 0}</p>
+                          <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                            {order.status || 'CONFIRMED'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* System Info Card */}
+              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+                <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Platform System Status</span>
+                </h3>
+                <div className="space-y-3 text-xs">
+                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                    <span className="text-slate-400">Route Access</span>
+                    <span className="font-semibold text-emerald-400">/adminpanel (Protected)</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                    <span className="text-slate-400">Registration Mode</span>
+                    <span className="font-semibold text-slate-300">Single Admin Locked</span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                    <span className="text-slate-400">Box Office Sync</span>
+                    <span className="font-semibold text-emerald-400">Live Reaction Active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: USER PROFILES */}
+        {activeTab === 'users' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search user by name or email..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="text-xs text-slate-400">
+                Total Registered User Profiles: <span className="font-bold text-white">{usersList.length}</span>
+              </div>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950/80 text-slate-400 font-semibold border-b border-slate-800">
+                    <tr>
+                      <th className="p-3.5">User Profile</th>
+                      <th className="p-3.5">Contact Email</th>
+                      <th className="p-3.5">Location</th>
+                      <th className="p-3.5">Registered Date</th>
+                      <th className="p-3.5">Account Status</th>
+                      <th className="p-3.5 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {usersList
+                      .filter((u) => {
+                        if (!userSearch.trim()) return true;
+                        const q = userSearch.toLowerCase();
+                        return (
+                          u.firstName?.toLowerCase().includes(q) ||
+                          u.lastName?.toLowerCase().includes(q) ||
+                          u.email?.toLowerCase().includes(q)
+                        );
+                      })
+                      .map((u) => (
+                        <tr key={u.id} className="hover:bg-slate-800/40 transition-colors">
+                          <td className="p-3.5">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-emerald-400 text-xs shrink-0">
+                                {u.firstName ? u.firstName.charAt(0).toUpperCase() : u.email.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-white">
+                                  {u.firstName} {u.lastName}
+                                </p>
+                                <p className="text-[10px] text-slate-500">ID: {u.id}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-3.5">{u.email}</td>
+                          <td className="p-3.5 text-slate-400">
+                            {u.city || 'Lahore'}, {u.country || 'Pakistan'}
+                          </td>
+                          <td className="p-3.5 text-slate-400">{u.createdAt || 'Recent'}</td>
+                          <td className="p-3.5">
+                            <span
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                                u.status === 'Suspended'
+                                  ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                                  : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                              }`}
+                            >
+                              {u.status || 'Active'}
+                            </span>
+                          </td>
+                          <td className="p-3.5 text-right">
+                            <button
+                              onClick={() => handleToggleUserStatus(u.id)}
+                              className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-medium transition-colors"
+                            >
+                              {u.status === 'Suspended' ? 'Activate' : 'Suspend'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: TICKET & EVENT UPLOAD */}
+        {activeTab === 'tickets' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search events or tickets..."
+                  value={eventSearch}
+                  onChange={(e) => setEventSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <button
+                onClick={() => setIsUploadModalOpen(true)}
+                className="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition-all flex items-center justify-center gap-2"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>Upload & Publish Ticket</span>
+              </button>
+            </div>
+
+            {/* Events Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {eventsList
+                .filter((e) => {
+                  if (!eventSearch.trim()) return true;
+                  const q = eventSearch.toLowerCase();
+                  return e.title?.toLowerCase().includes(q) || e.artist?.toLowerCase().includes(q);
+                })
+                .map((event) => (
+                  <div
+                    key={event.id}
+                    className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-700 transition-all"
+                  >
+                    <div>
+                      <div className="relative h-36 w-full rounded-xl overflow-hidden mb-3 bg-slate-950">
+                        <Image
+                          src={event.image}
+                          alt={event.title}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                        {event.uploadedByAdmin && (
+                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold shadow">
+                            Admin Uploaded
+                          </span>
+                        )}
+                        <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-slate-950/80 text-white text-[10px] font-semibold border border-slate-800">
+                          {event.category?.toUpperCase()}
+                        </span>
+                      </div>
+
+                      <h4 className="font-bold text-white text-sm line-clamp-1">{event.title}</h4>
+                      <p className="text-xs text-slate-400 mt-0.5">{event.artist} · {event.venue}, {event.city}</p>
+                      <p className="text-[11px] text-slate-500 mt-1">Date: {event.date} · {event.time}</p>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-800/80 mt-3 flex items-center justify-between">
+                      <span className="text-sm font-bold text-emerald-400">${event.priceFrom}+</span>
+
+                      {event.uploadedByAdmin ? (
+                        <button
+                          onClick={() => handleDeleteCustomEvent(event.id)}
+                          className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[11px] font-semibold transition-colors flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Delete</span>
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-slate-500 font-medium">Standard Inventory</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: ORDERS */}
+        {activeTab === 'orders' && (
+          <div className="space-y-6">
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search order ID or customer email..."
+                value={orderSearch}
+                onChange={(e) => setOrderSearch(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300">
+                  <thead className="bg-slate-950/80 text-slate-400 font-semibold border-b border-slate-800">
+                    <tr>
+                      <th className="p-3.5">Order Ref ID</th>
+                      <th className="p-3.5">Customer Email</th>
+                      <th className="p-3.5">Total Amount</th>
+                      <th className="p-3.5">Payment Status</th>
+                      <th className="p-3.5">Order Timestamp</th>
+                      <th className="p-3.5 text-right">View Ticket</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {ordersList.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="p-8 text-center text-slate-500">
+                          No customer orders found in database yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      ordersList
+                        .filter((o) => {
+                          if (!orderSearch.trim()) return true;
+                          const q = orderSearch.toLowerCase();
+                          return (
+                            o.orderId?.toLowerCase().includes(q) ||
+                            o.id?.toLowerCase().includes(q) ||
+                            o.customerInfo?.email?.toLowerCase().includes(q)
+                          );
+                        })
+                        .map((o) => (
+                          <tr key={o.orderId || o.id} className="hover:bg-slate-800/40 transition-colors">
+                            <td className="p-3.5 font-bold text-white">#{o.orderId || o.id}</td>
+                            <td className="p-3.5">{o.customerInfo?.email || o.email || 'customer@ticketx.com'}</td>
+                            <td className="p-3.5 font-bold text-emerald-400">${o.total || o.paymentSummary?.total || 0}</td>
+                            <td className="p-3.5">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                {o.status || 'CONFIRMED'}
+                              </span>
+                            </td>
+                            <td className="p-3.5 text-slate-400">{o.createdAt || 'Recent'}</td>
+                            <td className="p-3.5 text-right">
+                              <button
+                                onClick={() => setSelectedOrder(o)}
+                                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-medium transition-colors flex items-center gap-1 inline-flex"
+                              >
+                                <Eye className="w-3 h-3 text-emerald-400" />
+                                <span>Details</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: ADMIN SETTINGS */}
+        {activeTab === 'settings' && (
+          <div className="max-w-xl space-y-6">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+              <h3 className="text-sm font-bold text-white mb-4">Admin Profile Details</h3>
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block text-slate-400 mb-1">Admin Full Name</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={activeAdmin?.name || 'Super Admin'}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1">Admin Authorized Email</label>
+                  <input
+                    type="email"
+                    readOnly
+                    value={activeAdmin?.email || 'admin@ticketx.com'}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1">Role & Privilege Level</label>
+                  <span className="inline-block px-2.5 py-1 bg-rose-500/20 text-rose-400 rounded text-xs font-bold border border-rose-500/30">
+                    Super Admin (Unrestricted Access)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* MODAL: UPLOAD NEW TICKET */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Ticket className="w-5 h-5 text-emerald-400" />
+                <span>Upload & Publish New Ticket Event</span>
+              </h3>
+              <button
+                onClick={() => setIsUploadModalOpen(false)}
+                className="text-slate-400 hover:text-white text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTicket} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Event Title *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Atif Aslam Live Concert"
+                    value={newTicket.title}
+                    onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Artist / Organizer *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Atif Aslam"
+                    value={newTicket.artist}
+                    onChange={(e) => setNewTicket({ ...newTicket, artist: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Category</label>
+                  <select
+                    value={newTicket.category}
+                    onChange={(e) => setNewTicket({ ...newTicket, category: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                  >
+                    <option value="concerts">Concerts</option>
+                    <option value="sports">Sports</option>
+                    <option value="arts-theater">Theater & Arts</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="family">Family</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">City</label>
+                  <input
+                    type="text"
+                    value={newTicket.city}
+                    onChange={(e) => setNewTicket({ ...newTicket, city: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Venue Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Gaddafi Stadium"
+                    value={newTicket.venue}
+                    onChange={(e) => setNewTicket({ ...newTicket, venue: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Date</label>
+                  <input
+                    type="date"
+                    value={newTicket.date}
+                    onChange={(e) => setNewTicket({ ...newTicket, date: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Time</label>
+                  <input
+                    type="text"
+                    value={newTicket.time}
+                    onChange={(e) => setNewTicket({ ...newTicket, time: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Starting Price ($)</label>
+                  <input
+                    type="number"
+                    value={newTicket.priceFrom}
+                    onChange={(e) => setNewTicket({ ...newTicket, priceFrom: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Cover Image URL</label>
+                <input
+                  type="text"
+                  placeholder="https://images.unsplash.com/..."
+                  value={newTicket.image}
+                  onChange={(e) => setNewTicket({ ...newTicket, image: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Description</label>
+                <textarea
+                  rows="3"
+                  placeholder="Write details about the event..."
+                  value={newTicket.description}
+                  onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsUploadModalOpen(false)}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-emerald-600/20"
+                >
+                  Publish Ticket Event Live
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* MODAL: ORDER DETAILS */}
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6"
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+              <h3 className="text-base font-bold text-white">
+                Order #{selectedOrder.orderId || selectedOrder.id} Details
+              </h3>
+              <button onClick={() => setSelectedOrder(null)} className="text-slate-400 hover:text-white">
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs text-slate-300">
+              <p><strong className="text-white">Customer:</strong> {selectedOrder.customerInfo?.name || 'Customer'}</p>
+              <p><strong className="text-white">Email:</strong> {selectedOrder.customerInfo?.email || 'N/A'}</p>
+              <p><strong className="text-white">Total Amount Paid:</strong> <span className="text-emerald-400 font-bold">${selectedOrder.total || selectedOrder.paymentSummary?.total || 0}</span></p>
+              <p><strong className="text-white">Status:</strong> {selectedOrder.status || 'CONFIRMED'}</p>
+            </div>
+
+            <div className="pt-4 border-t border-slate-800 mt-4 text-right">
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold"
+              >
+                Close
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  );
+}

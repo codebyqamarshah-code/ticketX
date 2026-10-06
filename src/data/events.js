@@ -556,61 +556,80 @@ export const events = [
 ];
 
 // Helper getters
-export const getEvents = () => events;
+export const getStoredCustomEvents = () => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const saved = localStorage.getItem('ticketx-custom-events');
+    return saved ? JSON.parse(saved) : [];
+  } catch (_) {
+    return [];
+  }
+};
 
-export const getEventBySlug = (slug) => events.find((e) => e.slug === slug) || null;
+export const getAllEvents = () => {
+  const custom = getStoredCustomEvents();
+  return [...custom, ...events];
+};
+
+export const getEvents = () => getAllEvents();
+
+export const getEventBySlug = (slug) => getAllEvents().find((e) => e.slug === slug) || null;
 
 export const getEventsByCategory = (category, subcategory) => {
-  return events.filter((e) => {
+  return getAllEvents().filter((e) => {
     if (e.category !== category) return false;
     if (subcategory && subcategory !== 'all' && e.subcategory !== subcategory) return false;
     return true;
   });
 };
 
-export const getEventsByCity = (cityId) => events.filter((e) => e.cityId === cityId);
+export const getEventsByCity = (cityId) => getAllEvents().filter((e) => e.cityId === cityId);
 
-export const getEventsByArtist = (artistSlug) => events.filter((e) => e.artistSlug === artistSlug);
+export const getEventsByArtist = (artistSlug) => getAllEvents().filter((e) => e.artistSlug === artistSlug);
 
-export const getEventsByTeam = (teamSlug) => events.filter((e) => e.teamSlug === teamSlug);
+export const getEventsByTeam = (teamSlug) => getAllEvents().filter((e) => e.teamSlug === teamSlug);
 
-export const getEventsByVenue = (venueSlug) => events.filter((e) => e.venueSlug === venueSlug);
+export const getEventsByVenue = (venueSlug) => getAllEvents().filter((e) => e.venueSlug === venueSlug);
 
-export const getTrendingEvents = () => events.filter((e) => e.isTrending);
+export const getTrendingEvents = () => getAllEvents().filter((e) => e.isTrending);
 
-export const getFeaturedEvents = () => events.filter((e) => e.isFeatured);
+export const getFeaturedEvents = () => getAllEvents().filter((e) => e.isFeatured);
 
-export const getPopularEvents = () => events.filter((e) => e.isPopular);
+export const getPopularEvents = () => getAllEvents().filter((e) => e.isPopular);
 
 export const getWeekendEvents = (category = 'all') => {
-  if (category === 'all') return events.slice(0, 8);
-  return events.filter((e) => e.category === category).slice(0, 8);
+  const all = getAllEvents();
+  if (category === 'all') return all.slice(0, 8);
+  return all.filter((e) => e.category === category).slice(0, 8);
 };
 
 export const getRelatedEvents = (currentEvent) => {
-  if (!currentEvent) return events.slice(0, 4);
-  return events
+  const all = getAllEvents();
+  if (!currentEvent) return all.slice(0, 4);
+  return all
     .filter((e) => e.id !== currentEvent.id && (e.category === currentEvent.category || e.cityId === currentEvent.cityId))
     .slice(0, 4);
 };
 
 export const searchEvents = (query) => {
-  if (!query) return events;
+  const all = getAllEvents();
+  if (!query) return all;
   const q = query.toLowerCase();
-  return events.filter(
+  return all.filter(
     (e) =>
-      e.title.toLowerCase().includes(q) ||
-      e.artist.toLowerCase().includes(q) ||
-      e.venue.toLowerCase().includes(q) ||
-      e.city.toLowerCase().includes(q) ||
-      e.category.toLowerCase().includes(q) ||
+      e.title?.toLowerCase().includes(q) ||
+      e.artist?.toLowerCase().includes(q) ||
+      e.venue?.toLowerCase().includes(q) ||
+      e.city?.toLowerCase().includes(q) ||
+      e.category?.toLowerCase().includes(q) ||
       (e.subcategory && e.subcategory.toLowerCase().includes(q)) ||
       (e.tags && e.tags.some((t) => t.includes(q)))
   );
 };
 
 export const searchAll = (query) => {
-  if (!query) return { events, artists, teams, venues, cities: popularCities };
+  const all = getAllEvents();
+  if (!query) return { events: all, artists, teams, venues, cities: popularCities };
   const q = query.toLowerCase();
   return {
     events: searchEvents(query),
@@ -633,7 +652,7 @@ export const filterAndSortEvents = ({
   isAccessible,
   sortBy = 'recommended',
 } = {}) => {
-  let list = query ? searchEvents(query) : [...events];
+  let list = query ? searchEvents(query) : getAllEvents();
 
   if (category && category !== 'all') {
     list = list.filter((e) => e.category === category);
