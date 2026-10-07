@@ -276,9 +276,14 @@ export default function AdminPanelPage() {
       setIsLoading(false);
 
       if (data.success) {
-        setOtpEmail(regForm.email.trim());
-        setAuthStep('otp');
-        showToast('Verification email sent!');
+        if (data.alreadyVerified) {
+          setAuthStep('login');
+          showToast('Setup complete! Your email is already verified. Please login.', 'success');
+        } else {
+          setOtpEmail(regForm.email.trim());
+          setAuthStep('otp');
+          showToast('Verification email sent!');
+        }
       } else {
         setAuthError(data.message || 'Setup failed.');
       }

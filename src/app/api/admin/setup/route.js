@@ -53,6 +53,11 @@ export async function POST(req) {
         newAdmin.role = 'super_admin';
         newAdmin.firstName = firstName;
         newAdmin.password = await hashPassword(password);
+        
+        if (newAdmin.emailVerified) {
+          await newAdmin.save();
+          return NextResponse.json({ success: true, message: 'Admin setup complete', alreadyVerified: true });
+        }
       }
     } else {
       // Create entirely new user
