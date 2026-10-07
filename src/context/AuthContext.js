@@ -1,154 +1,111 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
-const DEMO_USERS = [
-  {
-    id: 'usr-001',
-    firstName: 'Alex',
-    lastName: 'Morgan',
-    email: 'alex.morgan@example.com',
-    password: 'password123',
-    phone: '(555) 234-5678',
-    city: 'Los Angeles',
-    country: 'USA',
-    avatar: null,
-  },
-];
-
-function getInitialActiveUser() {
-  if (typeof window === 'undefined') return null;
-  try {
-    const saved = localStorage.getItem('ticketx-active-user');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed && parsed.email) return parsed;
-    }
-  } catch (_) {}
-  return null;
-}
-
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(getInitialActiveUser);
-  const [isAuthenticated, setIsAuthenticated] = useState(() => !!getInitialActiveUser());
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Helper to get registered users database
-  const getRegisteredUsers = () => {
-    try {
-      const saved = localStorage.getItem('ticketx-users-db');
-      return saved ? JSON.parse(saved) : DEMO_USERS;
-    } catch (_) {
-      return DEMO_USERS;
-    }
-  };
-
-  // Real Sign In
-  const signIn = (email, password) => {
-    const usersDb = getRegisteredUsers();
-    const cleanEmail = email?.trim().toLowerCase();
-
-    // Find matching user
-    const foundUser = usersDb.find(
-      (u) => u.email.toLowerCase() === cleanEmail
-    );
-
-    if (!foundUser) {
-      // If user does not exist in DB yet, allow login with any valid password for demo flexibility, but register them dynamically
-      const newUser = {
-        id: `usr-${Math.floor(1000 + Math.random() * 9000)}`,
-        firstName: email.split('@')[0] || 'User',
-        lastName: '',
-        email: cleanEmail,
-        password: password,
-        phone: '',
-        city: 'New York',
-        country: 'USA',
-        avatar: null,
-      };
-      
-      const updatedDb = [...usersDb, newUser];
-      localStorage.setItem('ticketx-users-db', JSON.stringify(updatedDb));
-      localStorage.setItem('ticketx-active-user', JSON.stringify(newUser));
-      setUser(newUser);
-      setIsAuthenticated(true);
-      return { success: true, user: newUser };
-    }
-
-    // Check password if configured
-    if (foundUser.password && foundUser.password !== password) {
-      return { success: false, message: 'Incorrect password. Please try again.' };
-    }
-
-    localStorage.setItem('ticketx-active-user', JSON.stringify(foundUser));
-    setUser(foundUser);
-    setIsAuthenticated(true);
-    return { success: true, user: foundUser };
-  };
-
-  // Real Sign Up
-  const signUp = (firstName, lastName, email, password) => {
-    const usersDb = getRegisteredUsers();
-    const cleanEmail = email?.trim().toLowerCase();
-
-    const existingUser = usersDb.find(
-      (u) => u.email.toLowerCase() === cleanEmail
-    );
-
-    if (existingUser) {
-      // User already exists, log them in directly
-      localStorage.setItem('ticketx-active-user', JSON.stringify(existingUser));
-      setUser(existingUser);
-      setIsAuthenticated(true);
-      return { success: true, user: existingUser, message: 'Account already exists. Signed in successfully!' };
-    }
-
-    const newUser = {
-      id: `usr-${Math.floor(10000 + Math.random() * 90000)}`,
-      firstName: firstName || 'Fan',
-      lastName: lastName || '',
-      email: cleanEmail,
-      password: password,
-      phone: '',
-      city: 'Los Angeles',
-      country: 'USA',
-      avatar: null,
-    };
-
-    const updatedDb = [...usersDb, newUser];
-    localStorage.setItem('ticketx-users-db', JSON.stringify(updatedDb));
-    localStorage.setItem('ticketx-active-user', JSON.stringify(newUser));
-
-    setUser(newUser);
-    setIsAuthenticated(true);
-    return { success: true, user: newUser };
-  };
-
-  // Sign Out
-  const signOut = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('ticketx-active-user');
-  };
-
-  // Update Profile
-  const updateProfile = (updatedFields) => {
-    setUser((prev) => {
-      const next = { ...prev, ...updatedFields };
-      localStorage.setItem('ticketx-active-user', JSON.stringify(next));
-
-      // Update in db as well
-      const usersDb = getRegisteredUsers();
-      const idx = usersDb.findIndex((u) => u.id === next.id);
-      if (idx !== -1) {
-        usersDb[idx] = next;
-        localStorage.setItem('ticketx-users-db', JSON.stringify(usersDb));
+  // Check auth on mount
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.success && data.user) {
+          setUser(data.user);
+          setIsAuthenticated(true);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
+    }
+    checkAuth();
+  }, []);
 
-      return next;
-    });
+  const signIn = async (email, password) => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+      }
+      return data; // returns { success, message, user, unverified }
+    } catch (error) {
+      return { success: false, message: 'Network error. Please try again.' };
+    }
+  };
+
+  const signUp = async (firstName, lastName, email, password) => {
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, email, password })
+      });
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return { success: false, message: 'Network error. Please try again.' };
+    }
+  };
+
+  const verifyOtp = async (email, otp) => {
+    try {
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+      }
+      return data;
+    } catch (error) {
+      return { success: false, message: 'Network error. Please try again.' };
+    }
+  };
+
+  const resendOtp = async (email) => {
+    try {
+      const res = await fetch('/api/auth/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      return await res.json();
+    } catch (error) {
+      return { success: false, message: 'Network error. Please try again.' };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error('Logout error', error);
+    }
+  };
+
+  const updateProfile = async (updatedFields) => {
+    // Currently fake update in UI. Backend endpoint needed for real profile update.
+    setUser((prev) => ({ ...prev, ...updatedFields }));
   };
 
   return (
@@ -159,6 +116,8 @@ export function AuthProvider({ children }) {
         loading,
         signIn,
         signUp,
+        verifyOtp,
+        resendOtp,
         signOut,
         updateProfile,
       }}

@@ -117,10 +117,46 @@ function getInitialTickets() {
 }
 
 export default function AdminPanelPage() {
-  // Auth state initialized safely without triggering useEffect setState warnings
-  const [hasAdminAccount, setHasAdminAccount] = useState(getInitialAdminAccount);
-  const [activeAdmin, setActiveAdmin] = useState(getInitialAdminSession);
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => !!getInitialAdminSession());
+  // Auth state
+  const [hasAdminAccount, setHasAdminAccount] = useState(false);
+  const [activeAdmin, setActiveAdmin] = useState(null);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [authStep, setAuthStep] = useState('loading'); // 'loading', 'setup', 'login', 'otp'
+  const [otpEmail, setOtpEmail] = useState('');
+
+  React.useEffect(() => {
+    async function checkAuth() {
+      try {
+        // First check if logged in
+        const meRes = await fetch('/api/auth/me');
+        const meData = await meRes.json();
+        
+        if (meData.success && meData.user && meData.user.role === 'super_admin') {
+          setActiveAdmin(meData.user);
+          setIsAdminLoggedIn(true);
+          setHasAdminAccount(true);
+          setAuthStep('dashboard');
+          return;
+        }
+
+        // If not logged in, check if admin exists
+        const statusRes = await fetch('/api/admin/status');
+        const statusData = await statusRes.json();
+        
+        if (statusData.isSetup) {
+          setHasAdminAccount(true);
+          setAuthStep('login');
+        } else {
+          setHasAdminAccount(false);
+          setAuthStep('setup');
+        }
+      } catch (err) {
+        console.error(err);
+        setAuthStep('login');
+      }
+    }
+    checkAuth();
+  }, []);
 
   // Form states (Registration & Login)
   const [regForm, setRegForm] = useState({
@@ -137,6 +173,8 @@ export default function AdminPanelPage() {
   });
   const [authError, setAuthError] = useState('');
   const [authSuccess, setAuthSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
 
   // Dashboard Navigation
   const [activeTab, setActiveTab] = useState('overview');
@@ -190,7 +228,7 @@ export default function AdminPanelPage() {
   }, []);
 
   // Handle Admin One-Time Registration
-  const handleRegisterAdmin = (e) => {
+  const handleRegisterAdmin = async (e) => {
     e.preventDefault();
     setAuthError('');
     setAuthSuccess('');
@@ -210,54 +248,94 @@ export default function AdminPanelPage() {
       return;
     }
 
-    const adminData = {
-      id: 'admin-super-01',
-      name: regForm.name.trim(),
-      email: regForm.email.trim().toLowerCase(),
-      password: regForm.password,
-      role: 'Super Admin',
-      avatar: regForm.avatar || null,
-      createdAt: new Date().toISOString(),
-    };
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/admin/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: regForm.name.trim(),
+          email: regForm.email.trim(),
+          password: regForm.password
+        })
+      });
+      const data = await res.json();
+      setIsLoading(false);
 
-    localStorage.setItem(ADMIN_CREDS_KEY, JSON.stringify(adminData));
-    sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(adminData));
-
-    setHasAdminAccount(true);
-    setActiveAdmin(adminData);
-    setIsAdminLoggedIn(true);
-    showToast('Super Admin Account registered successfully!');
+      if (data.success) {
+        setOtpEmail(regForm.email.trim());
+        setAuthStep('otp');
+        showToast('Verification email sent!');
+      } else {
+        setAuthError(data.message || 'Setup failed.');
+      }
+    } catch (err) {
+      setIsLoading(false);
+      setAuthError('Network error. Please try again.');
+    }
   };
 
   // Handle Admin Login
-  const handleLoginAdmin = (e) => {
+  const handleLoginAdmin = async (e) => {
     e.preventDefault();
     setAuthError('');
+    setIsLoading(true);
 
     try {
-      const savedCredsStr = localStorage.getItem(ADMIN_CREDS_KEY);
-      if (!savedCredsStr) {
-        setAuthError('No Super Admin account registered yet.');
-        return;
-      }
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: loginForm.email.trim(),
+          password: loginForm.password
+        })
+      });
+      const data = await res.json();
+      setIsLoading(false);
 
-      const savedCreds = JSON.parse(savedCredsStr);
-
-      if (
-        loginForm.email.trim().toLowerCase() === savedCreds.email.toLowerCase() &&
-        loginForm.password === savedCreds.password
-      ) {
-        sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(savedCreds));
-        setActiveAdmin(savedCreds);
+      if (data.success) {
+        setActiveAdmin(data.user);
         setIsAdminLoggedIn(true);
-        showToast(`Welcome back, ${savedCreds.name}!`);
+        setHasAdminAccount(true);
+        setAuthStep('dashboard');
+        showToast(`Welcome back, ${data.user.firstName}!`);
+      } else if (data.unverified) {
+        setOtpEmail(loginForm.email.trim());
+        
+        // request resend before moving to otp step automatically
+        await fetch('/api/auth/resend-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: loginForm.email.trim() })
+        });
+
+        setAuthStep('otp');
       } else {
-        setAuthError('Invalid Admin Email or Password.');
+        setAuthError(data.message || 'Invalid Admin Email or Password.');
       }
     } catch (err) {
+      setIsLoading(false);
       setAuthError('Authentication error. Please try again.');
     }
   };
+
+  const handleAdminOtpVerified = () => {
+    showToast('Admin email verified successfully!');
+    // After verified, they have a cookie. We can set them as logged in.
+    setTimeout(async () => {
+      const meRes = await fetch('/api/auth/me');
+      const meData = await meRes.json();
+      if (meData.success && meData.user && meData.user.role === 'super_admin') {
+        setActiveAdmin(meData.user);
+        setIsAdminLoggedIn(true);
+        setHasAdminAccount(true);
+        setAuthStep('dashboard');
+      } else {
+        setAuthStep('login');
+      }
+    }, 500);
+  };
+
 
   // Handle Logout
   const handleLogout = () => {
@@ -417,8 +495,81 @@ export default function AdminPanelPage() {
               </div>
             )}
 
-            {/* REGISTRATION FORM (Only if NO account exists yet) */}
-            {!hasAdminAccount ? (
+            {authStep === 'otp' ? (
+              <div className="space-y-4">
+                <p className="text-sm text-slate-300 mb-4 text-center">
+                  We've sent a 6-digit verification code to:<br/>
+                  <strong className="text-emerald-400">{otpEmail}</strong>
+                </p>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setAuthError('');
+                  setIsLoading(true);
+                  const formData = new FormData(e.target);
+                  const otp = formData.get('otp');
+                  try {
+                    const res = await fetch('/api/auth/verify-email', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email: otpEmail, otp })
+                    });
+                    const data = await res.json();
+                    setIsLoading(false);
+                    if (data.success) {
+                      handleAdminOtpVerified();
+                    } else {
+                      setAuthError(data.message || 'Invalid OTP');
+                    }
+                  } catch (err) {
+                    setIsLoading(false);
+                    setAuthError('Network error');
+                  }
+                }}>
+                  <input
+                    name="otp"
+                    type="text"
+                    required
+                    maxLength={6}
+                    placeholder="123456"
+                    className="w-full text-center tracking-[1em] py-3 bg-slate-950/80 border border-slate-800 rounded-lg text-xl font-mono text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full mt-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+                  >
+                    {isLoading ? 'Verifying...' : 'Verify Admin Email'}
+                  </button>
+                </form>
+                <div className="text-center mt-4 text-xs">
+                  <button onClick={async () => {
+                    if(isLoading) return;
+                    setIsLoading(true);
+                    setAuthError('');
+                    setAuthSuccess('');
+                    try {
+                      const res = await fetch('/api/auth/resend-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: otpEmail })
+                      });
+                      const data = await res.json();
+                      setIsLoading(false);
+                      if (data.success) {
+                        setAuthSuccess('Code resent!');
+                      } else {
+                        setAuthError(data.message || 'Failed to resend code.');
+                      }
+                    } catch (err) {
+                      setIsLoading(false);
+                      setAuthError('Network error.');
+                    }
+                  }} className="text-slate-400 hover:text-emerald-400 disabled:opacity-50" disabled={isLoading}>
+                    Resend Code
+                  </button>
+                </div>
+              </div>
+            ) : !hasAdminAccount ? (
               <form onSubmit={handleRegisterAdmin} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">

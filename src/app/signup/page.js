@@ -9,6 +9,8 @@ import Logo from '@/components/ui/Logo';
 import { ArrowRight, ShieldCheck, Ticket, User, Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, Sparkles, LockKeyhole } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import OtpVerification from '@/components/auth/OtpVerification';
+
 function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -25,6 +27,7 @@ function SignUpForm() {
   const [agreeTerms, setAgreeTerms] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState('signup'); // 'signup' | 'otp'
 
   // Password strength logic
   const getPasswordStrength = () => {
@@ -38,7 +41,7 @@ function SignUpForm() {
 
   const strength = getPasswordStrength();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -57,16 +60,38 @@ function SignUpForm() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      const res = signUp(firstName, lastName, email, password);
-      setLoading(false);
-      if (res.success) {
-        router.push(redirectUrl);
-      } else {
-        setError(res.message || 'Failed to create account. Please try again.');
-      }
-    }, 450);
+    const res = await signUp(firstName, lastName, email, password);
+    setLoading(false);
+    
+    if (res.success) {
+      setStep('otp');
+    } else {
+      setError(res.message || 'Failed to create account. Please try again.');
+    }
   };
+
+  const handleOtpVerified = () => {
+    router.push(redirectUrl);
+  };
+
+  if (step === 'otp') {
+    return (
+      <div className="relative w-full max-w-md my-12 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative auth-glass-card rounded-3xl p-7 sm:p-9 space-y-6 shadow-2xl border border-[var(--border)]"
+        >
+          <OtpVerification 
+            email={email} 
+            onVerified={handleOtpVerified} 
+            onCancel={() => setStep('signup')} 
+          />
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full max-w-md my-12 px-4">

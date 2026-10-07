@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, CheckCircle2, Ticket, AlertCircle, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import OtpVerification from '@/components/auth/OtpVerification';
+
 function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,8 +25,9 @@ function SignInForm() {
   const [errorMsg, setErrorMsg] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState('login'); // 'login' | 'otp'
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -35,21 +38,49 @@ function SignInForm() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      const res = signIn(email, password);
-      setLoading(false);
+    const res = await signIn(email, password);
+    setLoading(false);
 
-      if (!res.success) {
+    if (!res.success) {
+      if (res.unverified) {
+        setStep('otp');
+      } else {
         setErrorMsg(res.message || 'Invalid login details. Please try again.');
-        return;
       }
+      return;
+    }
 
-      setSuccess(true);
-      setTimeout(() => {
-        router.push(redirectUrl);
-      }, 600);
-    }, 450);
+    setSuccess(true);
+    setTimeout(() => {
+      router.push(redirectUrl);
+    }, 600);
   };
+
+  const handleOtpVerified = () => {
+    setSuccess(true);
+    setTimeout(() => {
+      router.push(redirectUrl);
+    }, 600);
+  };
+
+  if (step === 'otp') {
+    return (
+      <div className="relative w-full max-w-md my-12 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative auth-glass-card rounded-3xl p-7 sm:p-9 space-y-6 shadow-2xl border border-[var(--border)]"
+        >
+          <OtpVerification 
+            email={email} 
+            onVerified={handleOtpVerified} 
+            onCancel={() => setStep('login')} 
+          />
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full max-w-md my-12 px-4">
