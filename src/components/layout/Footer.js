@@ -21,8 +21,8 @@ const footerLinks = {
     { label: 'My Tickets', href: '/account/tickets' },
   ],
   Account: [
-    { label: 'Sign In', href: '/account' },
-    { label: 'Create Account', href: '/account' },
+    { label: 'Sign In', href: '/signin' },
+    { label: 'Create Account', href: '/signup' },
     { label: 'My Orders', href: '/account/orders' },
     { label: 'Favorites', href: '/account/favorites' },
     { label: 'Watchlist', href: '/account/watchlist' },

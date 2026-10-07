@@ -28,6 +28,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { getAllEvents } from '@/data/events';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 const ADMIN_CREDS_KEY = 'ticketx-admin-credentials';
 const ADMIN_SESSION_KEY = 'ticketx-admin-session';
@@ -445,7 +446,7 @@ export default function AdminPanelPage() {
   // -------------------------------------------------------------
   if (!isAdminLoggedIn) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
+      <div className="min-h-screen dark:bg-slate-950 bg-white dark:text-slate-100 text-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
         {/* Background glow effects */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -458,23 +459,23 @@ export default function AdminPanelPage() {
           {/* Header Logo */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-block mb-3">
-              <span className="text-3xl font-black tracking-tight text-white">
+              <span className="text-3xl font-black tracking-tight dark:text-white text-black">
                 Ticket<span className="text-rose-600">X</span>
               </span>
             </Link>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-400">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 text-xs dark:text-slate-400 text-gray-600">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>Super Admin Authorization Portal</span>
             </div>
           </div>
 
-          <div className="bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl relative">
+          <div className="dark:bg-slate-900 bg-gray-100/90 backdrop-blur-xl border dark:border-slate-800 border-gray-300 rounded-2xl p-8 shadow-2xl relative">
             {/* Form Title */}
             <div className="mb-6">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold dark:text-white text-black">
                 {hasAdminAccount ? 'Super Admin Sign In' : 'One-Time Admin Setup'}
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs dark:text-slate-400 text-gray-600 mt-1">
                 {hasAdminAccount
                   ? 'Enter your registered credentials to manage the platform.'
                   : 'Welcome! Create your primary Super Admin account to get full control.'}
@@ -497,7 +498,7 @@ export default function AdminPanelPage() {
 
             {authStep === 'otp' ? (
               <div className="space-y-4">
-                <p className="text-sm text-slate-300 mb-4 text-center">
+                <p className="text-sm dark:text-slate-300 text-gray-700 mb-4 text-center">
                   We've sent a 6-digit verification code to:<br/>
                   <strong className="text-emerald-400">{otpEmail}</strong>
                 </p>
@@ -531,12 +532,12 @@ export default function AdminPanelPage() {
                     required
                     maxLength={6}
                     placeholder="123456"
-                    className="w-full text-center tracking-[1em] py-3 bg-slate-950/80 border border-slate-800 rounded-lg text-xl font-mono text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    className="w-full text-center tracking-[1em] py-3 dark:bg-slate-950 bg-white/80 border dark:border-slate-800 border-gray-300 rounded-lg text-xl font-mono dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                   />
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full mt-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+                    className="w-full mt-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 dark:text-white text-black text-sm font-semibold transition-colors disabled:opacity-50"
                   >
                     {isLoading ? 'Verifying...' : 'Verify Admin Email'}
                   </button>
@@ -564,7 +565,7 @@ export default function AdminPanelPage() {
                       setIsLoading(false);
                       setAuthError('Network error.');
                     }
-                  }} className="text-slate-400 hover:text-emerald-400 disabled:opacity-50" disabled={isLoading}>
+                  }} className="dark:text-slate-400 text-gray-600 hover:text-emerald-400 disabled:opacity-50" disabled={isLoading}>
                     Resend Code
                   </button>
                 </div>
@@ -572,7 +573,7 @@ export default function AdminPanelPage() {
             ) : !hasAdminAccount ? (
               <form onSubmit={handleRegisterAdmin} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold dark:text-slate-300 text-gray-700 mb-1">
                     Super Admin Full Name *
                   </label>
                   <div className="relative">
@@ -583,13 +584,13 @@ export default function AdminPanelPage() {
                       placeholder="e.g. Qamar Abbas"
                       value={regForm.name}
                       onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2 dark:bg-slate-950 bg-white/80 border dark:border-slate-800 border-gray-300 rounded-lg text-sm dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold dark:text-slate-300 text-gray-700 mb-1">
                     Admin Official Email *
                   </label>
                   <div className="relative">
@@ -600,13 +601,13 @@ export default function AdminPanelPage() {
                       placeholder="admin@ticketx.com"
                       value={regForm.email}
                       onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2 dark:bg-slate-950 bg-white/80 border dark:border-slate-800 border-gray-300 rounded-lg text-sm dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold dark:text-slate-300 text-gray-700 mb-1">
                     Password *
                   </label>
                   <div className="relative">
@@ -617,13 +618,13 @@ export default function AdminPanelPage() {
                       placeholder="••••••••"
                       value={regForm.password}
                       onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2 dark:bg-slate-950 bg-white/80 border dark:border-slate-800 border-gray-300 rounded-lg text-sm dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold dark:text-slate-300 text-gray-700 mb-1">
                     Confirm Password *
                   </label>
                   <div className="relative">
@@ -634,7 +635,7 @@ export default function AdminPanelPage() {
                       placeholder="••••••••"
                       value={regForm.confirmPassword}
                       onChange={(e) => setRegForm({ ...regForm, confirmPassword: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2 dark:bg-slate-950 bg-white/80 border dark:border-slate-800 border-gray-300 rounded-lg text-sm dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -642,7 +643,7 @@ export default function AdminPanelPage() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-sm transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 dark:text-white text-black font-semibold rounded-lg text-sm transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
                   >
                     <ShieldCheck className="w-4 h-4" />
                     <span>Complete One-Time Admin Setup</span>
@@ -653,7 +654,7 @@ export default function AdminPanelPage() {
               /* LOGIN FORM (Shown when account is already registered) */
               <form onSubmit={handleLoginAdmin} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold dark:text-slate-300 text-gray-700 mb-1">
                     Admin Email
                   </label>
                   <div className="relative">
@@ -664,13 +665,13 @@ export default function AdminPanelPage() {
                       placeholder="admin@ticketx.com"
                       value={loginForm.email}
                       onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2 dark:bg-slate-950 bg-white/80 border dark:border-slate-800 border-gray-300 rounded-lg text-sm dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold dark:text-slate-300 text-gray-700 mb-1">
                     Password
                   </label>
                   <div className="relative">
@@ -681,7 +682,7 @@ export default function AdminPanelPage() {
                       placeholder="••••••••"
                       value={loginForm.password}
                       onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                      className="w-full pl-9 pr-3 py-2 dark:bg-slate-950 bg-white/80 border dark:border-slate-800 border-gray-300 rounded-lg text-sm dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -689,7 +690,7 @@ export default function AdminPanelPage() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-sm transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 dark:text-white text-black font-semibold rounded-lg text-sm transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
                   >
                     <Key className="w-4 h-4" />
                     <span>Sign In to Admin Dashboard</span>
@@ -708,7 +709,7 @@ export default function AdminPanelPage() {
           <div className="text-center mt-6">
             <Link
               href="/"
-              className="text-xs text-slate-500 hover:text-slate-300 transition-colors inline-flex items-center gap-1"
+              className="text-xs text-slate-500 hover:dark:text-slate-300 text-gray-700 transition-colors inline-flex items-center gap-1"
             >
               ← Back to Main TicketX Website
             </Link>
@@ -722,7 +723,7 @@ export default function AdminPanelPage() {
   // RENDER: FULL SUPER ADMIN DASHBOARD (AUTHENTICATED)
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
+    <div className="min-h-screen dark:bg-slate-950 bg-white dark:text-slate-100 text-black flex flex-col md:flex-row">
       {/* Toast Notification Banner */}
       <AnimatePresence>
         {toastMessage && (
@@ -745,12 +746,12 @@ export default function AdminPanelPage() {
       </AnimatePresence>
 
       {/* ADMIN SIDEBAR */}
-      <aside className="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col justify-between shrink-0">
+      <aside className="w-full md:w-64 dark:bg-slate-900 bg-gray-100 border-b md:border-b-0 md:border-r dark:border-slate-800 border-gray-300 flex flex-col justify-between shrink-0">
         <div>
           {/* Logo & Brand */}
-          <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+          <div className="p-5 border-b dark:border-slate-800 border-gray-300/80 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-xl font-black tracking-tight text-white">
+              <span className="text-xl font-black tracking-tight dark:text-white text-black">
                 Ticket<span className="text-rose-600">X</span>
               </span>
               <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
@@ -766,7 +767,7 @@ export default function AdminPanelPage() {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 activeTab === 'overview'
                   ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  : 'dark:text-slate-400 text-gray-600 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -778,7 +779,7 @@ export default function AdminPanelPage() {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 activeTab === 'users'
                   ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  : 'dark:text-slate-400 text-gray-600 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
             >
               <Users className="w-4 h-4" />
@@ -790,7 +791,7 @@ export default function AdminPanelPage() {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 activeTab === 'tickets'
                   ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  : 'dark:text-slate-400 text-gray-600 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
             >
               <Ticket className="w-4 h-4" />
@@ -802,7 +803,7 @@ export default function AdminPanelPage() {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 activeTab === 'orders'
                   ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  : 'dark:text-slate-400 text-gray-600 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
             >
               <ShoppingBag className="w-4 h-4" />
@@ -814,7 +815,7 @@ export default function AdminPanelPage() {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 activeTab === 'settings'
                   ? 'bg-emerald-600/15 text-emerald-400 border border-emerald-500/30'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  : 'dark:text-slate-400 text-gray-600 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
             >
               <Settings className="w-4 h-4" />
@@ -824,22 +825,22 @@ export default function AdminPanelPage() {
         </div>
 
         {/* Admin Footer Info */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/40">
+        <div className="p-4 border-t dark:border-slate-800 border-gray-300 dark:bg-slate-950 bg-white/40">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
+              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center font-bold dark:text-white text-black text-xs shrink-0">
                 {activeAdmin?.name?.charAt(0).toUpperCase() || 'A'}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{activeAdmin?.name}</p>
-                <p className="text-[10px] text-slate-400 truncate">{activeAdmin?.role || 'Super Admin'}</p>
+                <p className="text-xs font-semibold dark:text-white text-black truncate">{activeAdmin?.name}</p>
+                <p className="text-[10px] dark:text-slate-400 text-gray-600 truncate">{activeAdmin?.role || 'Super Admin'}</p>
               </div>
             </div>
           </div>
 
           <button
             onClick={handleLogout}
-            className="w-full py-1.5 px-3 bg-slate-800 hover:bg-rose-950/60 hover:text-rose-300 text-slate-300 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
+            className="w-full py-1.5 px-3 bg-slate-800 hover:bg-rose-950/60 hover:text-rose-300 dark:text-slate-300 text-gray-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Sign Out</span>
@@ -848,26 +849,27 @@ export default function AdminPanelPage() {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-950">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 dark:bg-slate-950 bg-white">
         {/* TOP BAR */}
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800/80">
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b dark:border-slate-800 border-gray-300/80">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+            <h1 className="text-2xl font-bold dark:text-white text-black tracking-tight flex items-center gap-2">
               {activeTab === 'overview' && 'Dashboard Overview'}
               {activeTab === 'users' && 'User Profiles & Access'}
               {activeTab === 'tickets' && 'Ticket & Event Management'}
               {activeTab === 'orders' && 'Customer Orders & Transactions'}
               {activeTab === 'settings' && 'Admin Settings'}
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
-              Live Super Admin Control Panel · Route: <code className="bg-slate-900 px-1.5 py-0.5 rounded text-emerald-400">/adminpanel</code>
+            <p className="text-xs dark:text-slate-400 text-gray-600 mt-1">
+              Live Super Admin Control Panel · Route: <code className="dark:bg-slate-900 bg-gray-100 px-1.5 py-0.5 rounded text-emerald-400">/adminpanel</code>
             </p>
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2"
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 dark:text-white text-black font-semibold rounded-xl text-xs transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Upload New Ticket</span>
@@ -875,9 +877,9 @@ export default function AdminPanelPage() {
             <Link
               href="/"
               target="_blank"
-              className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-medium border border-slate-800 transition-colors flex items-center gap-1.5"
+              className="px-3 py-2 dark:bg-slate-900 bg-gray-100 hover:bg-slate-800 dark:text-slate-300 text-gray-700 rounded-xl text-xs font-medium border dark:border-slate-800 border-gray-300 transition-colors flex items-center gap-1.5"
             >
-              <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+              <ArrowUpRight className="w-3.5 h-3.5 dark:text-slate-400 text-gray-600" />
               <span>Live Website</span>
             </Link>
           </div>
@@ -888,58 +890,58 @@ export default function AdminPanelPage() {
           <div className="space-y-6">
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+              <div className="p-5 dark:bg-slate-900 bg-gray-100/80 border dark:border-slate-800 border-gray-300 rounded-2xl relative overflow-hidden">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Total Platform Revenue</span>
+                  <span className="text-xs dark:text-slate-400 text-gray-600 font-medium">Total Platform Revenue</span>
                   <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
                     <DollarSign className="w-4 h-4" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-white">${totalRevenue.toLocaleString()}</h3>
+                <h3 className="text-2xl font-black dark:text-white text-black">${totalRevenue.toLocaleString()}</h3>
                 <span className="text-[10px] text-emerald-400 font-medium mt-1 inline-flex items-center gap-0.5">
                   <TrendingUp className="w-3 h-3" /> Live primary box office sales
                 </span>
               </div>
 
-              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+              <div className="p-5 dark:bg-slate-900 bg-gray-100/80 border dark:border-slate-800 border-gray-300 rounded-2xl relative overflow-hidden">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Tickets Sold</span>
+                  <span className="text-xs dark:text-slate-400 text-gray-600 font-medium">Tickets Sold</span>
                   <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
                     <Ticket className="w-4 h-4" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-white">{totalTicketsSold}</h3>
-                <span className="text-[10px] text-slate-400 font-medium mt-1">Confirmed ticket seats issued</span>
+                <h3 className="text-2xl font-black dark:text-white text-black">{totalTicketsSold}</h3>
+                <span className="text-[10px] dark:text-slate-400 text-gray-600 font-medium mt-1">Confirmed ticket seats issued</span>
               </div>
 
-              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+              <div className="p-5 dark:bg-slate-900 bg-gray-100/80 border dark:border-slate-800 border-gray-300 rounded-2xl relative overflow-hidden">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Active User Profiles</span>
+                  <span className="text-xs dark:text-slate-400 text-gray-600 font-medium">Active User Profiles</span>
                   <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
                     <Users className="w-4 h-4" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-white">{usersList.length}</h3>
+                <h3 className="text-2xl font-black dark:text-white text-black">{usersList.length}</h3>
                 <span className="text-[10px] text-indigo-400 font-medium mt-1">Registered members</span>
               </div>
 
-              <div className="p-5 bg-slate-900/80 border border-slate-800 rounded-2xl relative overflow-hidden">
+              <div className="p-5 dark:bg-slate-900 bg-gray-100/80 border dark:border-slate-800 border-gray-300 rounded-2xl relative overflow-hidden">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Live Events & Listings</span>
+                  <span className="text-xs dark:text-slate-400 text-gray-600 font-medium">Live Events & Listings</span>
                   <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
                     <Calendar className="w-4 h-4" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-black text-white">{eventsList.length}</h3>
+                <h3 className="text-2xl font-black dark:text-white text-black">{eventsList.length}</h3>
                 <span className="text-[10px] text-amber-400 font-medium mt-1">Available across categories</span>
               </div>
             </div>
 
             {/* Quick Actions & Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+              <div className="lg:col-span-2 dark:bg-slate-900 bg-gray-100/80 border dark:border-slate-800 border-gray-300 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <h3 className="text-sm font-bold dark:text-white text-black flex items-center gap-2">
                     <ShoppingBag className="w-4 h-4 text-emerald-400" />
                     <span>Recent Ticket Orders</span>
                   </h3>
@@ -952,20 +954,20 @@ export default function AdminPanelPage() {
                 </div>
 
                 {ordersList.length === 0 ? (
-                  <div className="text-center py-8 border border-dashed border-slate-800 rounded-xl">
+                  <div className="text-center py-8 border border-dashed dark:border-slate-800 border-gray-300 rounded-xl">
                     <ShoppingBag className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">No ticket orders placed yet.</p>
+                    <p className="text-xs dark:text-slate-400 text-gray-600">No ticket orders placed yet.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {ordersList.slice(0, 5).map((order) => (
                       <div
                         key={order.orderId || order.id}
-                        className="p-3 bg-slate-950/60 border border-slate-800/80 rounded-xl flex items-center justify-between text-xs"
+                        className="p-3 dark:bg-slate-950 bg-white/60 border dark:border-slate-800 border-gray-300/80 rounded-xl flex items-center justify-between text-xs"
                       >
                         <div>
-                          <p className="font-semibold text-white">Order #{order.orderId || order.id}</p>
-                          <p className="text-slate-400 text-[11px]">{order.customerInfo?.email || order.email || 'Customer'}</p>
+                          <p className="font-semibold dark:text-white text-black">Order #{order.orderId || order.id}</p>
+                          <p className="dark:text-slate-400 text-gray-600 text-[11px]">{order.customerInfo?.email || order.email || 'Customer'}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-emerald-400">${order.total || order.paymentSummary?.total || 0}</p>
@@ -980,22 +982,22 @@ export default function AdminPanelPage() {
               </div>
 
               {/* System Info Card */}
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
-                <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+              <div className="dark:bg-slate-900 bg-gray-100/80 border dark:border-slate-800 border-gray-300 rounded-2xl p-6">
+                <h3 className="text-sm font-bold dark:text-white text-black mb-4 flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   <span>Platform System Status</span>
                 </h3>
                 <div className="space-y-3 text-xs">
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-                    <span className="text-slate-400">Route Access</span>
+                  <div className="p-3 rounded-xl dark:bg-slate-950 bg-white/60 border dark:border-slate-800 border-gray-300 flex items-center justify-between">
+                    <span className="dark:text-slate-400 text-gray-600">Route Access</span>
                     <span className="font-semibold text-emerald-400">/adminpanel (Protected)</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-                    <span className="text-slate-400">Registration Mode</span>
-                    <span className="font-semibold text-slate-300">Single Admin Locked</span>
+                  <div className="p-3 rounded-xl dark:bg-slate-950 bg-white/60 border dark:border-slate-800 border-gray-300 flex items-center justify-between">
+                    <span className="dark:text-slate-400 text-gray-600">Registration Mode</span>
+                    <span className="font-semibold dark:text-slate-300 text-gray-700">Single Admin Locked</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-                    <span className="text-slate-400">Box Office Sync</span>
+                  <div className="p-3 rounded-xl dark:bg-slate-950 bg-white/60 border dark:border-slate-800 border-gray-300 flex items-center justify-between">
+                    <span className="dark:text-slate-400 text-gray-600">Box Office Sync</span>
                     <span className="font-semibold text-emerald-400">Live Reaction Active</span>
                   </div>
                 </div>
@@ -1015,19 +1017,19 @@ export default function AdminPanelPage() {
                   placeholder="Search user by name or email..."
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full pl-9 pr-3 py-2 dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-xl text-xs dark:text-white text-black placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="text-xs text-slate-400">
-                Total Registered User Profiles: <span className="font-bold text-white">{usersList.length}</span>
+              <div className="text-xs dark:text-slate-400 text-gray-600">
+                Total Registered User Profiles: <span className="font-bold dark:text-white text-black">{usersList.length}</span>
               </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <div className="dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950/80 text-slate-400 font-semibold border-b border-slate-800">
+                <table className="w-full text-left text-xs dark:text-slate-300 text-gray-700">
+                  <thead className="dark:bg-slate-950 bg-white/80 dark:text-slate-400 text-gray-600 font-semibold border-b dark:border-slate-800 border-gray-300">
                     <tr>
                       <th className="p-3.5">User Profile</th>
                       <th className="p-3.5">Contact Email</th>
@@ -1056,7 +1058,7 @@ export default function AdminPanelPage() {
                                 {u.firstName ? u.firstName.charAt(0).toUpperCase() : u.email.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <p className="font-semibold text-white">
+                                <p className="font-semibold dark:text-white text-black">
                                   {u.firstName} {u.lastName}
                                 </p>
                                 <p className="text-[10px] text-slate-500">ID: {u.id}</p>
@@ -1064,10 +1066,10 @@ export default function AdminPanelPage() {
                             </div>
                           </td>
                           <td className="p-3.5">{u.email}</td>
-                          <td className="p-3.5 text-slate-400">
+                          <td className="p-3.5 dark:text-slate-400 text-gray-600">
                             {u.city || 'Lahore'}, {u.country || 'Pakistan'}
                           </td>
-                          <td className="p-3.5 text-slate-400">{u.createdAt || 'Recent'}</td>
+                          <td className="p-3.5 dark:text-slate-400 text-gray-600">{u.createdAt || 'Recent'}</td>
                           <td className="p-3.5">
                             <span
                               className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
@@ -1107,13 +1109,13 @@ export default function AdminPanelPage() {
                   placeholder="Search events or tickets..."
                   value={eventSearch}
                   onChange={(e) => setEventSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full pl-9 pr-3 py-2 dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-xl text-xs dark:text-white text-black placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <button
                 onClick={() => setIsUploadModalOpen(true)}
-                className="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs transition-all flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-500 dark:text-white text-black font-semibold rounded-xl text-xs transition-all flex items-center justify-center gap-2"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Upload & Publish Ticket</span>
@@ -1131,10 +1133,10 @@ export default function AdminPanelPage() {
                 .map((event) => (
                   <div
                     key={event.id}
-                    className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-700 transition-all"
+                    className="dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-700 transition-all"
                   >
                     <div>
-                      <div className="relative h-36 w-full rounded-xl overflow-hidden mb-3 bg-slate-950">
+                      <div className="relative h-36 w-full rounded-xl overflow-hidden mb-3 dark:bg-slate-950 bg-white">
                         <Image
                           src={event.image}
                           alt={event.title}
@@ -1143,21 +1145,21 @@ export default function AdminPanelPage() {
                           unoptimized
                         />
                         {event.uploadedByAdmin && (
-                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-bold shadow">
+                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-emerald-600 dark:text-white text-black text-[10px] font-bold shadow">
                             Admin Uploaded
                           </span>
                         )}
-                        <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-slate-950/80 text-white text-[10px] font-semibold border border-slate-800">
+                        <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded dark:bg-slate-950 bg-white/80 dark:text-white text-black text-[10px] font-semibold border dark:border-slate-800 border-gray-300">
                           {event.category?.toUpperCase()}
                         </span>
                       </div>
 
-                      <h4 className="font-bold text-white text-sm line-clamp-1">{event.title}</h4>
-                      <p className="text-xs text-slate-400 mt-0.5">{event.artist} · {event.venue}, {event.city}</p>
+                      <h4 className="font-bold dark:text-white text-black text-sm line-clamp-1">{event.title}</h4>
+                      <p className="text-xs dark:text-slate-400 text-gray-600 mt-0.5">{event.artist} · {event.venue}, {event.city}</p>
                       <p className="text-[11px] text-slate-500 mt-1">Date: {event.date} · {event.time}</p>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800/80 mt-3 flex items-center justify-between">
+                    <div className="pt-4 border-t dark:border-slate-800 border-gray-300/80 mt-3 flex items-center justify-between">
                       <span className="text-sm font-bold text-emerald-400">${event.priceFrom}+</span>
 
                       {event.uploadedByAdmin ? (
@@ -1188,14 +1190,14 @@ export default function AdminPanelPage() {
                 placeholder="Search order ID or customer email..."
                 value={orderSearch}
                 onChange={(e) => setOrderSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                className="w-full pl-9 pr-3 py-2 dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-xl text-xs dark:text-white text-black placeholder-slate-500 focus:outline-none focus:border-emerald-500"
               />
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+            <div className="dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950/80 text-slate-400 font-semibold border-b border-slate-800">
+                <table className="w-full text-left text-xs dark:text-slate-300 text-gray-700">
+                  <thead className="dark:bg-slate-950 bg-white/80 dark:text-slate-400 text-gray-600 font-semibold border-b dark:border-slate-800 border-gray-300">
                     <tr>
                       <th className="p-3.5">Order Ref ID</th>
                       <th className="p-3.5">Customer Email</th>
@@ -1225,7 +1227,7 @@ export default function AdminPanelPage() {
                         })
                         .map((o) => (
                           <tr key={o.orderId || o.id} className="hover:bg-slate-800/40 transition-colors">
-                            <td className="p-3.5 font-bold text-white">#{o.orderId || o.id}</td>
+                            <td className="p-3.5 font-bold dark:text-white text-black">#{o.orderId || o.id}</td>
                             <td className="p-3.5">{o.customerInfo?.email || o.email || 'customer@ticketx.com'}</td>
                             <td className="p-3.5 font-bold text-emerald-400">${o.total || o.paymentSummary?.total || 0}</td>
                             <td className="p-3.5">
@@ -1233,7 +1235,7 @@ export default function AdminPanelPage() {
                                 {o.status || 'CONFIRMED'}
                               </span>
                             </td>
-                            <td className="p-3.5 text-slate-400">{o.createdAt || 'Recent'}</td>
+                            <td className="p-3.5 dark:text-slate-400 text-gray-600">{o.createdAt || 'Recent'}</td>
                             <td className="p-3.5 text-right">
                               <button
                                 onClick={() => setSelectedOrder(o)}
@@ -1256,29 +1258,29 @@ export default function AdminPanelPage() {
         {/* TAB 5: ADMIN SETTINGS */}
         {activeTab === 'settings' && (
           <div className="max-w-xl space-y-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-              <h3 className="text-sm font-bold text-white mb-4">Admin Profile Details</h3>
+            <div className="dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-2xl p-6">
+              <h3 className="text-sm font-bold dark:text-white text-black mb-4">Admin Profile Details</h3>
               <div className="space-y-4 text-xs">
                 <div>
-                  <label className="block text-slate-400 mb-1">Admin Full Name</label>
+                  <label className="block dark:text-slate-400 text-gray-600 mb-1">Admin Full Name</label>
                   <input
                     type="text"
                     readOnly
                     value={activeAdmin?.name || 'Super Admin'}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-semibold"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black font-semibold"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Admin Authorized Email</label>
+                  <label className="block dark:text-slate-400 text-gray-600 mb-1">Admin Authorized Email</label>
                   <input
                     type="email"
                     readOnly
                     value={activeAdmin?.email || 'admin@ticketx.com'}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white font-semibold"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black font-semibold"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 mb-1">Role & Privilege Level</label>
+                  <label className="block dark:text-slate-400 text-gray-600 mb-1">Role & Privilege Level</label>
                   <span className="inline-block px-2.5 py-1 bg-rose-500/20 text-rose-400 rounded text-xs font-bold border border-rose-500/30">
                     Super Admin (Unrestricted Access)
                   </span>
@@ -1291,20 +1293,20 @@ export default function AdminPanelPage() {
 
       {/* MODAL: UPLOAD NEW TICKET */}
       {isUploadModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 dark:bg-slate-950 bg-white/80 backdrop-blur-md flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-2xl dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-2xl p-6 max-h-[90vh] overflow-y-auto"
           >
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <div className="flex items-center justify-between pb-4 border-b dark:border-slate-800 border-gray-300 mb-4">
+              <h3 className="text-lg font-bold dark:text-white text-black flex items-center gap-2">
                 <Ticket className="w-5 h-5 text-emerald-400" />
                 <span>Upload & Publish New Ticket Event</span>
               </h3>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="text-slate-400 hover:text-white text-sm"
+                className="dark:text-slate-400 text-gray-600 hover:dark:text-white text-black text-sm"
               >
                 ✕
               </button>
@@ -1313,37 +1315,37 @@ export default function AdminPanelPage() {
             <form onSubmit={handleCreateTicket} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Event Title *</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Event Title *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Atif Aslam Live Concert"
                     value={newTicket.title}
                     onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Artist / Organizer *</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Artist / Organizer *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Atif Aslam"
                     value={newTicket.artist}
                     onChange={(e) => setNewTicket({ ...newTicket, artist: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Category</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Category</label>
                   <select
                     value={newTicket.category}
                     onChange={(e) => setNewTicket({ ...newTicket, category: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black focus:outline-none focus:border-emerald-500"
                   >
                     <option value="concerts">Concerts</option>
                     <option value="sports">Sports</option>
@@ -1354,93 +1356,111 @@ export default function AdminPanelPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">City</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">City</label>
                   <input
                     type="text"
                     value={newTicket.city}
                     onChange={(e) => setNewTicket({ ...newTicket, city: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Venue Name *</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Venue Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Gaddafi Stadium"
                     value={newTicket.venue}
                     onChange={(e) => setNewTicket({ ...newTicket, venue: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Date</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Date</label>
                   <input
                     type="date"
                     value={newTicket.date}
                     onChange={(e) => setNewTicket({ ...newTicket, date: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Time</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Time</label>
                   <input
                     type="text"
                     value={newTicket.time}
                     onChange={(e) => setNewTicket({ ...newTicket, time: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Starting Price ($)</label>
+                  <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Starting Price ($)</label>
                   <input
                     type="number"
                     value={newTicket.priceFrom}
                     onChange={(e) => setNewTicket({ ...newTicket, priceFrom: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-semibold mb-1">Cover Image URL</label>
+              <div className="space-y-2">
+                <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Cover Image (URL or Upload)</label>
                 <input
                   type="text"
                   placeholder="https://images.unsplash.com/..."
                   value={newTicket.image}
                   onChange={(e) => setNewTicket({ ...newTicket, image: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500 mb-2"
                 />
+                <div className="flex items-center gap-2">
+                  <span className="text-xs dark:text-slate-500 text-gray-500">OR</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setNewTicket({ ...newTicket, image: reader.result });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="flex-1 px-3 py-2 text-sm dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition-all"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Description</label>
+                <label className="block dark:text-slate-300 text-gray-700 font-semibold mb-1">Description</label>
                 <textarea
                   rows="3"
                   placeholder="Write details about the event..."
                   value={newTicket.description}
                   onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 dark:bg-slate-950 bg-white border dark:border-slate-800 border-gray-300 rounded-lg dark:text-white text-black placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+              <div className="pt-4 flex items-center justify-end gap-3 border-t dark:border-slate-800 border-gray-300">
                 <button
                   type="button"
                   onClick={() => setIsUploadModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 dark:text-slate-300 text-gray-700 rounded-xl text-xs font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-emerald-600/20"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 dark:text-white text-black font-semibold rounded-xl text-xs shadow-lg shadow-emerald-600/20"
                 >
                   Publish Ticket Event Live
                 </button>
@@ -1452,32 +1472,32 @@ export default function AdminPanelPage() {
 
       {/* MODAL: ORDER DETAILS */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 dark:bg-slate-950 bg-white/80 backdrop-blur-md flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl p-6"
+            className="w-full max-w-lg dark:bg-slate-900 bg-gray-100 border dark:border-slate-800 border-gray-300 rounded-2xl p-6"
           >
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
-              <h3 className="text-base font-bold text-white">
+            <div className="flex items-center justify-between pb-4 border-b dark:border-slate-800 border-gray-300 mb-4">
+              <h3 className="text-base font-bold dark:text-white text-black">
                 Order #{selectedOrder.orderId || selectedOrder.id} Details
               </h3>
-              <button onClick={() => setSelectedOrder(null)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setSelectedOrder(null)} className="dark:text-slate-400 text-gray-600 hover:dark:text-white text-black">
                 ✕
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-slate-300">
-              <p><strong className="text-white">Customer:</strong> {selectedOrder.customerInfo?.name || 'Customer'}</p>
-              <p><strong className="text-white">Email:</strong> {selectedOrder.customerInfo?.email || 'N/A'}</p>
-              <p><strong className="text-white">Total Amount Paid:</strong> <span className="text-emerald-400 font-bold">${selectedOrder.total || selectedOrder.paymentSummary?.total || 0}</span></p>
-              <p><strong className="text-white">Status:</strong> {selectedOrder.status || 'CONFIRMED'}</p>
+            <div className="space-y-3 text-xs dark:text-slate-300 text-gray-700">
+              <p><strong className="dark:text-white text-black">Customer:</strong> {selectedOrder.customerInfo?.name || 'Customer'}</p>
+              <p><strong className="dark:text-white text-black">Email:</strong> {selectedOrder.customerInfo?.email || 'N/A'}</p>
+              <p><strong className="dark:text-white text-black">Total Amount Paid:</strong> <span className="text-emerald-400 font-bold">${selectedOrder.total || selectedOrder.paymentSummary?.total || 0}</span></p>
+              <p><strong className="dark:text-white text-black">Status:</strong> {selectedOrder.status || 'CONFIRMED'}</p>
             </div>
 
-            <div className="pt-4 border-t border-slate-800 mt-4 text-right">
+            <div className="pt-4 border-t dark:border-slate-800 border-gray-300 mt-4 text-right">
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-semibold"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 dark:text-white text-black rounded-xl text-xs font-semibold"
               >
                 Close
               </button>

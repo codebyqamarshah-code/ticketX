@@ -230,11 +230,11 @@ function MobileMenu({ onClose }) {
         ) : (
           <div>
             <Link
-              href="/signup"
+              href="/signin"
               onClick={onClose}
               className="block w-full py-3 text-center rounded-full bg-[var(--fg)] text-[var(--bg)] text-xs font-bold uppercase tracking-wider"
             >
-              Create Account
+              Login
             </Link>
           </div>
         )}
@@ -454,10 +454,10 @@ export default function Header() {
               </div>
             ) : (
               <Link
-                href="/signup"
+                href="/signin"
                 className="hidden md:inline-flex items-center px-4 py-2 text-[11px] font-black uppercase tracking-wider bg-[var(--fg)] text-[var(--bg)] rounded-full hover:opacity-90 active:scale-95 transition-all duration-200 shadow-sm"
               >
-                Create Account
+                Login
               </Link>
             )}
 
