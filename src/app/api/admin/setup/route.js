@@ -44,14 +44,26 @@ export async function POST(req) {
       return NextResponse.json({ success: true, message: 'Verification email sent' });
     }
 
-    // No super admin exists, create the FIRST one
-    const newAdmin = new User({
-      id: `adm-${Date.now()}`,
-      firstName: firstName,
-      email: cleanEmail,
-      role: 'super_admin',
-      password: await hashPassword(password)
-    });
+    // Check if the email is already in the DB as a normal user
+    let newAdmin = await User.findOne({ email: cleanEmail });
+
+    if (newAdmin) {
+      if (newAdmin.role !== 'super_admin') {
+        // Upgrade this normal user to super admin since there is no super admin yet
+        newAdmin.role = 'super_admin';
+        newAdmin.firstName = firstName;
+        newAdmin.password = await hashPassword(password);
+      }
+    } else {
+      // Create entirely new user
+      newAdmin = new User({
+        id: `adm-${Date.now()}`,
+        firstName: firstName,
+        email: cleanEmail,
+        role: 'super_admin',
+        password: await hashPassword(password)
+      });
+    }
 
     const otp = generateOTP();
     newAdmin.emailVerificationOtpHash = await hashPassword(otp);
