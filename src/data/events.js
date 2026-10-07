@@ -566,9 +566,37 @@ export const getStoredCustomEvents = () => {
   }
 };
 
+export const getDeletedEventIds = () => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const saved = localStorage.getItem('ticketx-deleted-events');
+    return saved ? JSON.parse(saved) : [];
+  } catch (_) { return []; }
+};
+
+export const getEditedEvents = () => {
+  if (typeof window === 'undefined') return {};
+  try {
+    const saved = localStorage.getItem('ticketx-edited-events');
+    return saved ? JSON.parse(saved) : {};
+  } catch (_) { return {}; }
+};
+
 export const getAllEvents = () => {
   const custom = getStoredCustomEvents();
-  return [...custom, ...events];
+  const deletedIds = getDeletedEventIds();
+  const editedDict = getEditedEvents();
+
+  // Combine and apply overrides
+  let all = [...custom, ...events];
+  all = all.filter(e => !deletedIds.includes(e.id));
+  
+  return all.map(e => {
+    if (editedDict[e.id]) {
+      return { ...e, ...editedDict[e.id] };
+    }
+    return e;
+  });
 };
 
 export const getEvents = () => getAllEvents();

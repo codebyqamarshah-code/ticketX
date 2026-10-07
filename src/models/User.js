@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema({
   country: { type: String, default: 'USA' },
   avatar: { type: String, default: null },
   role: { type: String, enum: ['user', 'super_admin'], default: 'user' },
+  status: { type: String, enum: ['Active', 'Suspended'], default: 'Active' },
   emailVerified: { type: Boolean, default: false },
   emailVerificationOtpHash: { type: String },
   emailVerificationOtpExpiresAt: { type: Date },

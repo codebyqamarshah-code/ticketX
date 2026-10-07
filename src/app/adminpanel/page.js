@@ -182,7 +182,19 @@ export default function AdminPanelPage() {
 
   // Data states using lazy initializers
   const [eventsList, setEventsList] = useState(getInitialEvents);
-  const [usersList, setUsersList] = useState(getInitialUsers);
+  const [usersList, setUsersList] = useState([]);
+
+  React.useEffect(() => {
+    if (isAdminLoggedIn) {
+      fetch('/api/admin/users')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setUsersList(data.users);
+          }
+        });
+    }
+  }, [isAdminLoggedIn]);
   const [ordersList] = useState(getInitialOrders);
   const [ticketsList] = useState(getInitialTickets);
 
@@ -347,7 +359,7 @@ export default function AdminPanelPage() {
     showToast('Logged out from Admin Panel.', 'info');
   };
 
-  // Upload/Create New Ticket
+  // Upload/Create/Edit Ticket
   const handleCreateTicket = (e) => {
     e.preventDefault();
 
@@ -356,85 +368,143 @@ export default function AdminPanelPage() {
       return;
     }
 
+    const isEdit = !!newTicket.id;
     const slug = newTicket.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    const createdEvent = {
-      id: `evt-${Date.now()}`,
-      slug: `${slug}-${Math.floor(Math.random() * 1000)}`,
-      title: newTicket.title,
-      category: newTicket.category,
-      subcategory: newTicket.subcategory,
-      artist: newTicket.artist,
+    
+    const eventData = {
+      ...newTicket,
+      id: newTicket.id || `evt-${Date.now()}`,
+      slug: newTicket.slug || `${slug}-${Math.floor(Math.random() * 1000)}`,
       artistSlug: newTicket.artist.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       description: newTicket.description || `Official tickets for ${newTicket.title} live at ${newTicket.venue}.`,
-      date: newTicket.date,
-      time: newTicket.time,
-      venue: newTicket.venue,
       venueSlug: newTicket.venue.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      city: newTicket.city,
-      country: newTicket.country,
       cityId: newTicket.city.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      image: newTicket.image,
       priceFrom: Number(newTicket.priceFrom) || 50,
       priceTo: Number(newTicket.priceTo) || 300,
       availableSeats: Number(newTicket.availableSeats) || 500,
-      availability: 'available',
-      isFeatured: newTicket.isFeatured,
-      isTrending: newTicket.isTrending,
+      availability: newTicket.availability || 'available',
       isPopular: true,
       isNearYou: true,
-      isVIP: newTicket.isVIP,
       isAccessible: true,
       isResale: false,
-      tags: [newTicket.category, newTicket.city.toLowerCase()],
-      uploadedByAdmin: true,
-      uploadedAt: new Date().toISOString(),
+      tags: newTicket.tags || [newTicket.category, newTicket.city.toLowerCase()],
+      uploadedByAdmin: newTicket.uploadedByAdmin !== undefined ? newTicket.uploadedByAdmin : true,
+      uploadedAt: newTicket.uploadedAt || new Date().toISOString(),
     };
 
     try {
-      const existingCustomStr = localStorage.getItem(CUSTOM_EVENTS_KEY);
-      const existingCustom = existingCustomStr ? JSON.parse(existingCustomStr) : [];
-      const updatedCustom = [createdEvent, ...existingCustom];
+      if (isEdit && !newTicket.uploadedByAdmin) {
+        // It's a static event edit
+        const editedStr = localStorage.getItem('ticketx-edited-events');
+        const editedDict = editedStr ? JSON.parse(editedStr) : {};
+        editedDict[eventData.id] = eventData;
+        localStorage.setItem('ticketx-edited-events', JSON.stringify(editedDict));
+      } else {
+        // It's a custom event (new or edit)
+        const existingCustomStr = localStorage.getItem(CUSTOM_EVENTS_KEY);
+        let existingCustom = existingCustomStr ? JSON.parse(existingCustomStr) : [];
+        if (isEdit) {
+          existingCustom = existingCustom.map(ev => ev.id === eventData.id ? eventData : ev);
+        } else {
+          existingCustom = [eventData, ...existingCustom];
+        }
+        localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(existingCustom));
+      }
 
-      localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(updatedCustom));
       refreshEvents();
       setIsUploadModalOpen(false);
-      showToast(`Ticket "${createdEvent.title}" uploaded & published live to website!`);
+      showToast(`Ticket "${eventData.title}" ${isEdit ? 'updated' : 'published'} live to website!`);
     } catch (err) {
       alert('Failed to save ticket event. Storage limit exceeded.');
     }
   };
 
-  // Delete Custom Event
-  const handleDeleteCustomEvent = (id) => {
-    if (!confirm('Are you sure you want to delete this ticket event?')) return;
+  const handleEditEventClick = (event) => {
+    setNewTicket(event);
+    setIsUploadModalOpen(true);
+  };
+
+  // Delete Event (Custom or Static)
+  const handleDeleteEvent = (id) => {
+    if (!confirm('Are you sure you want to permanently delete this event? This will remove it from the main website as well.')) return;
 
     try {
       const existingCustomStr = localStorage.getItem(CUSTOM_EVENTS_KEY);
+      let isCustom = false;
       if (existingCustomStr) {
         const existingCustom = JSON.parse(existingCustomStr);
-        const filtered = existingCustom.filter((e) => e.id !== id);
-        localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(filtered));
-        refreshEvents();
-        showToast('Event removed successfully.');
+        if (existingCustom.find((e) => e.id === id)) {
+          isCustom = true;
+          const filtered = existingCustom.filter((e) => e.id !== id);
+          localStorage.setItem(CUSTOM_EVENTS_KEY, JSON.stringify(filtered));
+        }
       }
-    } catch (_) {}
+
+      if (!isCustom) {
+        // Add to deleted-events list
+        const deletedStr = localStorage.getItem('ticketx-deleted-events');
+        const deletedArr = deletedStr ? JSON.parse(deletedStr) : [];
+        if (!deletedArr.includes(id)) {
+          deletedArr.push(id);
+          localStorage.setItem('ticketx-deleted-events', JSON.stringify(deletedArr));
+        }
+      }
+
+      refreshEvents();
+      showToast('Event removed successfully.');
+    } catch (_) {
+      showToast('Error removing event', 'error');
+    }
   };
 
   // Toggle User Status (Active / Suspended)
-  const handleToggleUserStatus = (userId) => {
-    const updatedUsers = usersList.map((u) => {
-      if (u.id === userId) {
-        return {
-          ...u,
-          status: u.status === 'Active' ? 'Suspended' : 'Active',
-        };
-      }
-      return u;
-    });
+  const handleToggleUserStatus = async (userId) => {
+    const user = usersList.find(u => u._id === userId || u.id === userId);
+    if (!user) return;
+    
+    const newStatus = user.status === 'Active' ? 'Suspended' : 'Active';
+    const actualId = user._id || user.id;
 
-    setUsersList(updatedUsers);
-    localStorage.setItem(USERS_DB_KEY, JSON.stringify(updatedUsers));
-    showToast('User status updated successfully.');
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: actualId, status: newStatus })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUsersList(usersList.map((u) => {
+          if ((u._id || u.id) === actualId) {
+            return { ...u, status: newStatus };
+          }
+          return u;
+        }));
+        showToast('User status updated successfully.');
+      } else {
+        showToast(data.message || 'Failed to update user', 'error');
+      }
+    } catch (e) {
+      showToast('Error updating user', 'error');
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!confirm('Are you sure you want to permanently delete this user?')) return;
+    const user = usersList.find(u => u._id === userId || u.id === userId);
+    const actualId = user._id || user.id;
+
+    try {
+      const res = await fetch(`/api/admin/users?id=${actualId}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        setUsersList(usersList.filter(u => (u._id || u.id) !== actualId));
+        showToast('User deleted successfully.');
+      } else {
+        showToast(data.message || 'Failed to delete user', 'error');
+      }
+    } catch (e) {
+      showToast('Error deleting user', 'error');
+    }
   };
 
   // Calculations for Stats
@@ -1051,7 +1121,7 @@ export default function AdminPanelPage() {
                         );
                       })
                       .map((u) => (
-                        <tr key={u.id} className="hover:bg-slate-800/40 transition-colors">
+                        <tr key={u._id || u.id} className="hover:bg-slate-800/40 transition-colors">
                           <td className="p-3.5">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-emerald-400 text-xs shrink-0">
@@ -1061,15 +1131,17 @@ export default function AdminPanelPage() {
                                 <p className="font-semibold dark:text-white text-black">
                                   {u.firstName} {u.lastName}
                                 </p>
-                                <p className="text-[10px] text-slate-500">ID: {u.id}</p>
+                                <p className="text-[10px] text-slate-500">ID: {u._id || u.id}</p>
                               </div>
                             </div>
                           </td>
                           <td className="p-3.5">{u.email}</td>
                           <td className="p-3.5 dark:text-slate-400 text-gray-600">
-                            {u.city || 'Lahore'}, {u.country || 'Pakistan'}
+                            {u.city || 'N/A'}, {u.country || 'N/A'}
                           </td>
-                          <td className="p-3.5 dark:text-slate-400 text-gray-600">{u.createdAt || 'Recent'}</td>
+                          <td className="p-3.5 dark:text-slate-400 text-gray-600">
+                            {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Recent'}
+                          </td>
                           <td className="p-3.5">
                             <span
                               className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
@@ -1081,12 +1153,18 @@ export default function AdminPanelPage() {
                               {u.status || 'Active'}
                             </span>
                           </td>
-                          <td className="p-3.5 text-right">
+                          <td className="p-3.5 text-right space-x-2 flex justify-end">
                             <button
-                              onClick={() => handleToggleUserStatus(u.id)}
+                              onClick={() => handleToggleUserStatus(u._id || u.id)}
                               className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-[11px] font-medium transition-colors"
                             >
                               {u.status === 'Suspended' ? 'Activate' : 'Suspend'}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUser(u._id || u.id)}
+                              className="px-2.5 py-1 bg-rose-900/50 hover:bg-rose-600 text-rose-200 rounded-lg text-[11px] font-medium transition-colors"
+                            >
+                              Delete
                             </button>
                           </td>
                         </tr>
@@ -1162,17 +1240,21 @@ export default function AdminPanelPage() {
                     <div className="pt-4 border-t dark:border-slate-800 border-gray-300/80 mt-3 flex items-center justify-between">
                       <span className="text-sm font-bold text-emerald-400">${event.priceFrom}+</span>
 
-                      {event.uploadedByAdmin ? (
+                      <div className="flex gap-2">
                         <button
-                          onClick={() => handleDeleteCustomEvent(event.id)}
+                          onClick={() => handleEditEventClick(event)}
+                          className="px-2.5 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-[11px] font-semibold transition-colors flex items-center gap-1"
+                        >
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEvent(event.id)}
                           className="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[11px] font-semibold transition-colors flex items-center gap-1"
                         >
                           <Trash2 className="w-3 h-3" />
                           <span>Delete</span>
                         </button>
-                      ) : (
-                        <span className="text-[10px] text-slate-500 font-medium">Standard Inventory</span>
-                      )}
+                      </div>
                     </div>
                   </div>
                 ))}
