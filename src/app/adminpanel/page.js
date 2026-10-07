@@ -643,6 +643,19 @@ export default function AdminPanelPage() {
                   }} className="dark:text-slate-400 text-gray-600 hover:text-emerald-400 disabled:opacity-50" disabled={isLoading}>
                     Resend Code
                   </button>
+
+                  <span className="mx-3 dark:text-slate-700 text-slate-300">|</span>
+
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setAuthError('');
+                      setAuthStep(hasAdminAccount ? 'login' : 'setup');
+                    }}
+                    className="dark:text-slate-400 text-gray-600 hover:dark:text-white text-black transition-colors"
+                  >
+                    ← Back
+                  </button>
                 </div>
               </div>
             ) : !hasAdminAccount ? (
