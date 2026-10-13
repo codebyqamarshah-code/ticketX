@@ -356,11 +356,15 @@ export default function AdminPanelPage() {
 
 
   // Handle Logout
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (_) {}
     sessionStorage.removeItem(ADMIN_SESSION_KEY);
     localStorage.removeItem(ADMIN_SESSION_KEY);
     setIsAdminLoggedIn(false);
     setActiveAdmin(null);
+    setAuthStep('login');
     showToast('Logged out from Admin Panel.', 'info');
   };
 
@@ -515,6 +519,17 @@ export default function AdminPanelPage() {
   // Calculations for Stats
   const totalRevenue = ordersList.reduce((acc, order) => acc + (Number(order.total) || Number(order.paymentSummary?.total) || 0), 0);
   const totalTicketsSold = ticketsList.length || ordersList.reduce((acc, o) => acc + (o.items ? o.items.reduce((sum, i) => sum + (i.quantity || 1), 0) : 1), 0);
+
+  if (authStep === 'loading') {
+    return (
+      <div className="min-h-screen dark:bg-slate-950 bg-white dark:text-slate-100 text-black flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
+        <div className="flex flex-col items-center gap-4 z-10">
+          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm dark:text-slate-400 text-gray-500 font-medium">Verifying authorization...</p>
+        </div>
+      </div>
+    );
+  }
 
   // -------------------------------------------------------------
   // RENDER: LOGIN / ONE-TIME REGISTER FORM (UNAUTHENTICATED)

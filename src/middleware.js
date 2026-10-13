@@ -19,21 +19,7 @@ export function middleware(req) {
   }
 
   const isAuthPage = path === '/signin' || path === '/signup';
-  const isAdminPage = path.startsWith('/adminpanel');
   const isProtectedUserPage = path.startsWith('/account');
-
-  // If user is trying to access admin panel
-  if (isAdminPage) {
-    if (!decoded) {
-      // Allow access to /adminpanel (shows login/setup)
-      return NextResponse.next();
-    }
-
-    if (decoded.role !== 'super_admin') {
-      // Normal user trying to access admin panel
-      return NextResponse.redirect(new URL('/', req.url));
-    }
-  }
 
   // If user is trying to access protected user pages
   if (isProtectedUserPage) {
@@ -54,5 +40,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/adminpanel/:path*', '/account/:path*', '/signin', '/signup']
+  matcher: ['/account/:path*', '/signin', '/signup']
 };
