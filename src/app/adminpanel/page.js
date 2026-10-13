@@ -23,6 +23,8 @@ import {
   Calendar,
   Trash2,
   Eye,
+  EyeOff,
+  Loader2,
   AlertTriangle,
   ArrowUpRight,
   TrendingUp
@@ -175,6 +177,9 @@ export default function AdminPanelPage() {
   const [authError, setAuthError] = useState('');
   const [authSuccess, setAuthSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showSetupPassword, setShowSetupPassword] = useState(false);
+  const [showSetupConfirmPassword, setShowSetupConfirmPassword] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
 
   // Dashboard Navigation
@@ -251,13 +256,19 @@ export default function AdminPanelPage() {
       return;
     }
 
-    if (regForm.password !== regForm.confirmPassword) {
-      setAuthError('Passwords do not match.');
+    if (regForm.password.length < 8) {
+      setAuthError('Password must be at least 8 characters long.');
       return;
     }
 
-    if (regForm.password.length < 6) {
-      setAuthError('Password must be at least 6 characters long.');
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>_~`\-+=/\\[\]]/;
+    if (!specialCharRegex.test(regForm.password)) {
+      setAuthError('Password must contain at least one special character (!@#$%^&* etc.).');
+      return;
+    }
+
+    if (regForm.password !== regForm.confirmPassword) {
+      setAuthError('Passwords do not match.');
       return;
     }
 
@@ -715,19 +726,46 @@ export default function AdminPanelPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--fg)] mb-1">
-                    Password *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-[var(--fg)]">
+                      Password *
+                    </label>
+                    <span className="text-[10px] text-[var(--fg-sec)]">Min. 8 chars & 1 special symbol</span>
+                  </div>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-[var(--fg-sec)] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="w-4 h-4 text-[var(--fg-sec)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
-                      type="password"
+                      type={showSetupPassword ? 'text' : 'password'}
                       required
                       placeholder="••••••••"
                       value={regForm.password}
                       onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600"
+                      className="w-full pl-9 pr-10 py-2.5 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 transition-colors"
                     />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowSetupPassword(!showSetupPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--fg-sec)] hover:text-rose-600 focus:outline-none transition-colors"
+                      title={showSetupPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showSetupPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  {/* Realtime password requirement indicators */}
+                  <div className="mt-1.5 flex items-center gap-3 text-[11px]">
+                    <span className={`inline-flex items-center gap-1 transition-colors ${regForm.password.length >= 8 ? 'text-emerald-500 font-medium' : 'text-[var(--fg-sec)]'}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${regForm.password.length >= 8 ? 'bg-emerald-500' : 'bg-[var(--border)]'}`} />
+                      8+ characters
+                    </span>
+                    <span className={`inline-flex items-center gap-1 transition-colors ${/[!@#$%^&*(),.?":{}|<>_~`\-+=/\\[\]]/.test(regForm.password) ? 'text-emerald-500 font-medium' : 'text-[var(--fg-sec)]'}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${/[!@#$%^&*(),.?":{}|<>_~`\-+=/\\[\]]/.test(regForm.password) ? 'bg-emerald-500' : 'bg-[var(--border)]'}`} />
+                      1 special symbol (!@#$...)
+                    </span>
                   </div>
                 </div>
 
@@ -736,25 +774,61 @@ export default function AdminPanelPage() {
                     Confirm Password *
                   </label>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-[var(--fg-sec)] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="w-4 h-4 text-[var(--fg-sec)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
-                      type="password"
+                      type={showSetupConfirmPassword ? 'text' : 'password'}
                       required
                       placeholder="••••••••"
                       value={regForm.confirmPassword}
                       onChange={(e) => setRegForm({ ...regForm, confirmPassword: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600"
+                      className="w-full pl-9 pr-10 py-2.5 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 transition-colors"
                     />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowSetupConfirmPassword(!showSetupConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--fg-sec)] hover:text-rose-600 focus:outline-none transition-colors"
+                      title={showSetupConfirmPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showSetupConfirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
                   </div>
+                  {regForm.confirmPassword && (
+                    <div className="mt-1 text-[11px]">
+                      {regForm.password === regForm.confirmPassword ? (
+                        <span className="text-emerald-500 font-medium inline-flex items-center gap-1">
+                          ✓ Passwords match
+                        </span>
+                      ) : (
+                        <span className="text-rose-500 font-medium inline-flex items-center gap-1">
+                          ✗ Passwords do not match
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-lg text-sm transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
+                    disabled={isLoading}
+                    className="w-full py-3 px-4 bg-rose-600 hover:bg-rose-700 active:scale-[0.98] active:brightness-95 text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg shadow-rose-600/25 hover:shadow-rose-600/40 flex items-center justify-center gap-2.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100 cursor-pointer"
                   >
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>Complete One-Time Admin Setup</span>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                        <span>Initializing Super Admin Portal...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="w-4 h-4 shrink-0" />
+                        <span>Initialize Super Admin Portal</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
@@ -773,7 +847,7 @@ export default function AdminPanelPage() {
                       placeholder="admin@ticketx.com"
                       value={loginForm.email}
                       onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600"
+                      className="w-full pl-9 pr-3 py-2.5 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600"
                     />
                   </div>
                 </div>
@@ -783,25 +857,48 @@ export default function AdminPanelPage() {
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-[var(--fg-sec)] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="w-4 h-4 text-[var(--fg-sec)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
-                      type="password"
+                      type={showLoginPassword ? 'text' : 'password'}
                       required
                       placeholder="••••••••"
                       value={loginForm.password}
                       onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                      className="w-full pl-9 pr-3 py-2 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600"
+                      className="w-full pl-9 pr-10 py-2.5 bg-[var(--bg-sec)] border border-[var(--border)] rounded-lg text-sm text-[var(--fg)] placeholder:text-[var(--fg-sec)] focus:outline-none focus:border-rose-600 focus:ring-1 focus:ring-rose-600 transition-colors"
                     />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowLoginPassword(!showLoginPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--fg-sec)] hover:text-rose-600 focus:outline-none transition-colors"
+                      title={showLoginPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showLoginPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
                   </div>
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-lg text-sm transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
+                    disabled={isLoading}
+                    className="w-full py-3 px-4 bg-rose-600 hover:bg-rose-700 active:scale-[0.98] active:brightness-95 text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg shadow-rose-600/25 hover:shadow-rose-600/40 flex items-center justify-center gap-2.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100 cursor-pointer"
                   >
-                    <Key className="w-4 h-4" />
-                    <span>Sign In to Admin Dashboard</span>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                        <span>Authenticating Admin...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Key className="w-4 h-4 shrink-0" />
+                        <span>Sign In to Admin Dashboard</span>
+                      </>
+                    )}
                   </button>
                 </div>
 

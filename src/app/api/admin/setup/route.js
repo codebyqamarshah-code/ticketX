@@ -13,6 +13,15 @@ export async function POST(req) {
       return NextResponse.json({ success: false, message: 'Missing required fields' }, { status: 400 });
     }
 
+    if (password.length < 8) {
+      return NextResponse.json({ success: false, message: 'Password must be at least 8 characters long.' }, { status: 400 });
+    }
+
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>_~`\-+=/\\[\]]/;
+    if (!specialCharRegex.test(password)) {
+      return NextResponse.json({ success: false, message: 'Password must contain at least one special character (!@#$%^&* etc.).' }, { status: 400 });
+    }
+
     const cleanEmail = email.trim().toLowerCase();
 
     // Check if any super admin exists (ONLY ONE ALLOWED)
