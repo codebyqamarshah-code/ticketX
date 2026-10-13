@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { EventCard } from '@/components/cards/EventCard';
-import { events as allEvents } from '@/data/events';
+import { events as defaultEvents } from '@/data/events';
 import { CalendarDays, Filter, Search, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -27,6 +27,26 @@ export default function UpcomingEventsPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeTimeframe, setActiveTimeframe] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [liveEvents, setLiveEvents] = useState(null);
+
+  const loadLiveEvents = () => {
+    fetch('/api/events')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.events)) {
+          setLiveEvents(data.events);
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    loadLiveEvents();
+    window.addEventListener('ticketx-events-updated', loadLiveEvents);
+    return () => window.removeEventListener('ticketx-events-updated', loadLiveEvents);
+  }, []);
+
+  const allEvents = liveEvents || defaultEvents;
 
   const filteredEvents = allEvents.filter((event) => {
     // Category Filter

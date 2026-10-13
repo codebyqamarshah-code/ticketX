@@ -1,7 +1,7 @@
-import { artists } from './artists';
-import { teams } from './teams';
-import { venues } from './venues';
-import { popularCities } from './categories';
+import { artists } from './artists.js';
+import { teams } from './teams.js';
+import { venues } from './venues.js';
+import { popularCities } from './categories.js';
 
 export const events = [
   // --- CONCERTS ---

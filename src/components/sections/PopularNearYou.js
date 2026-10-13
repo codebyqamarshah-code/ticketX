@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { useLocation } from '@/context/LocationContext';
@@ -21,12 +21,38 @@ const TABS = [
 export default function PopularNearYou() {
   const { location } = useLocation();
   const [activeTab, setActiveTab] = useState('all');
+  const [liveEvents, setLiveEvents] = useState(null);
+
+  const loadLiveEvents = () => {
+    fetch('/api/events')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.events)) {
+          setLiveEvents(data.events);
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    loadLiveEvents();
+    window.addEventListener('ticketx-events-updated', loadLiveEvents);
+    return () => window.removeEventListener('ticketx-events-updated', loadLiveEvents);
+  }, []);
 
   // Get events for the current city; fallback to popular events
-  const cityEvents = getEventsByCity(location.cityId);
-  const events = (cityEvents.length > 0 ? cityEvents : getPopularEvents())
-    .filter((e) => activeTab === 'all' || e.category === activeTab)
-    .slice(0, 4);
+  let events = [];
+  if (liveEvents) {
+    const cityEvents = liveEvents.filter((e) => e.cityId === location.cityId || e.city?.toLowerCase() === location.city?.toLowerCase());
+    events = (cityEvents.length > 0 ? cityEvents : liveEvents)
+      .filter((e) => activeTab === 'all' || e.category === activeTab)
+      .slice(0, 4);
+  } else {
+    const cityEvents = getEventsByCity(location.cityId);
+    events = (cityEvents.length > 0 ? cityEvents : getPopularEvents())
+      .filter((e) => activeTab === 'all' || e.category === activeTab)
+      .slice(0, 4);
+  }
 
   return (
     <section className="py-14 bg-transparent">

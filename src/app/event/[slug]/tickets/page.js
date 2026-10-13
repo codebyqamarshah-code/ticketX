@@ -22,7 +22,7 @@ export default function TicketSelectionPage() {
   const router = useRouter();
   const slug = params?.slug;
 
-  const event = useMemo(() => {
+  const staticEvent = useMemo(() => {
     return (
       getEventBySlug(slug) || {
         id: 'e-default',
@@ -35,6 +35,21 @@ export default function TicketSelectionPage() {
         priceFrom: 89,
       }
     );
+  }, [slug]);
+
+  const [event, setEvent] = useState(staticEvent);
+
+  useEffect(() => {
+    if (slug) {
+      fetch(`/api/events?slug=${slug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.event) {
+            setEvent(data.event);
+          }
+        })
+        .catch(() => {});
+    }
   }, [slug]);
 
   // Data-driven seat map inventory with left vertical stage config

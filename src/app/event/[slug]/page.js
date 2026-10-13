@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -19,28 +19,45 @@ export default function EventDetailPage() {
   const params = useParams();
   const slug = params?.slug;
 
-  const event = getEventBySlug(slug) || {
-    id: 'e-default',
-    slug: slug || 'event',
-    title: slug ? slug.replace('-', ' ').toUpperCase() : 'Event Title',
-    category: 'concerts',
-    subcategory: 'Live Show',
-    artist: 'Featured Artist',
-    artistSlug: 'taylor-swift',
-    description: 'Experience an extraordinary live event with world-class production, incredible acoustics, and memories that last a lifetime.',
-    date: '2026-10-15',
-    time: '7:30 PM',
-    venue: 'SoFi Stadium',
-    venueSlug: 'sofi-stadium',
-    city: 'Los Angeles',
-    country: 'USA',
-    priceFrom: 75,
-    priceTo: 450,
-    availability: 'available',
-    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80',
-    isVIP: true,
-    isAccessible: true,
-  };
+  const defaultEvent = useMemo(() => {
+    return getEventBySlug(slug) || {
+      id: 'e-default',
+      slug: slug || 'event',
+      title: slug ? slug.replace(/-/g, ' ').toUpperCase() : 'Event Title',
+      category: 'concerts',
+      subcategory: 'Live Show',
+      artist: 'Featured Artist',
+      artistSlug: 'taylor-swift',
+      description: 'Experience an extraordinary live event with world-class production, incredible acoustics, and memories that last a lifetime.',
+      date: '2026-10-15',
+      time: '7:30 PM',
+      venue: 'SoFi Stadium',
+      venueSlug: 'sofi-stadium',
+      city: 'Los Angeles',
+      country: 'USA',
+      priceFrom: 75,
+      priceTo: 450,
+      availability: 'available',
+      image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80',
+      isVIP: true,
+      isAccessible: true,
+    };
+  }, [slug]);
+
+  const [event, setEvent] = useState(defaultEvent);
+
+  useEffect(() => {
+    if (slug) {
+      fetch(`/api/events?slug=${slug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.event) {
+            setEvent(data.event);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [slug]);
 
   const relatedEvents = getRelatedEvents(event);
   const [copied, setCopied] = useState(false);

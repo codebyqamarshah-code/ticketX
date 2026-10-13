@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SectionHeader from '@/components/ui/SectionHeader';
@@ -9,7 +9,27 @@ import { getEventsByCategory } from '@/data/events';
 
 export default function CategorySection({ category, title, href, icon: Icon }) {
   const scrollRef = useRef(null);
-  const events = getEventsByCategory(category).slice(0, 6);
+  const [liveEvents, setLiveEvents] = useState(null);
+
+  const loadLiveEvents = () => {
+    fetch(`/api/events?category=${category}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.events)) {
+          setLiveEvents(data.events);
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    loadLiveEvents();
+    window.addEventListener('ticketx-events-updated', loadLiveEvents);
+    return () => window.removeEventListener('ticketx-events-updated', loadLiveEvents);
+  }, [category]);
+
+  const defaultEvents = getEventsByCategory(category).slice(0, 8);
+  const events = liveEvents ? liveEvents.slice(0, 8) : defaultEvents;
 
   const scroll = (dir) => {
     if (!scrollRef.current) return;

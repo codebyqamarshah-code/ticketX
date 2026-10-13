@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SectionHeader from '@/components/ui/SectionHeader';
 import { EventCard } from '@/components/cards/EventCard';
@@ -18,7 +18,32 @@ const TABS = [
 
 export default function HappeningThisWeekend() {
   const [activeTab, setActiveTab] = useState('all');
-  const events = getWeekendEvents(activeTab);
+  const [liveEvents, setLiveEvents] = useState(null);
+
+  const loadLiveEvents = () => {
+    fetch('/api/events')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.events)) {
+          setLiveEvents(data.events);
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    loadLiveEvents();
+    window.addEventListener('ticketx-events-updated', loadLiveEvents);
+    return () => window.removeEventListener('ticketx-events-updated', loadLiveEvents);
+  }, []);
+
+  const defaultEvents = getWeekendEvents(activeTab);
+  const events = liveEvents
+    ? (activeTab === 'all'
+        ? liveEvents
+        : liveEvents.filter((e) => e.category === activeTab)
+      ).slice(0, 8)
+    : defaultEvents;
 
   return (
     <section className="py-14 bg-[var(--bg-sec)]">

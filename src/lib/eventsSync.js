@@ -4,11 +4,19 @@ import { events as defaultEvents } from '@/data/events';
 
 export async function ensureEventsSeeded() {
   await connectDB();
-  const count = await Event.countDocuments({ isDeleted: { $ne: true } });
-  if (count > 0) return;
 
-  // Seed default events into MongoDB
-  const seedDocs = defaultEvents.slice(0, 25).map((e) => {
+  // Retrieve existing event IDs and slugs
+  const existingEvents = await Event.find({}, { id: 1, slug: 1, isDeleted: 1 }).lean();
+  const existingIds = new Set(existingEvents.map((e) => e.id));
+  const existingSlugs = new Set(existingEvents.map((e) => e.slug));
+
+  const missingDocs = [];
+
+  for (const e of defaultEvents) {
+    if (existingIds.has(e.id) || existingSlugs.has(e.slug)) {
+      continue;
+    }
+
     const minP = Number(e.priceFrom) || 50;
     const maxP = Number(e.priceTo) || minP * 2;
     const gaQty = 350;
@@ -16,7 +24,7 @@ export async function ensureEventsSeeded() {
 
     const ticketTypes = [
       {
-        id: `tt-${e.id || Date.now()}-ga`,
+        id: `tt-${e.id}-ga`,
         name: 'General Admission',
         description: 'Standard event entry with open general access area.',
         price: minP,
@@ -27,7 +35,7 @@ export async function ensureEventsSeeded() {
         status: 'Available'
       },
       {
-        id: `tt-${e.id || Date.now()}-vip`,
+        id: `tt-${e.id}-vip`,
         name: 'VIP Front Stage Pass',
         description: 'Priority early gate entry, VIP lounge and front-stage prime viewing.',
         price: maxP,
@@ -39,8 +47,8 @@ export async function ensureEventsSeeded() {
       }
     ];
 
-    return {
-      id: e.id || `evt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    missingDocs.push({
+      id: e.id,
       slug: e.slug || e.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       title: e.title,
       artist: e.artist || e.title,
@@ -73,14 +81,17 @@ export async function ensureEventsSeeded() {
       isAccessible: true,
       tags: e.tags || [e.category],
       uploadedByAdmin: false,
-      createdBy: 'System Seed'
-    };
-  });
+      createdBy: 'System Seed',
+      isDeleted: false
+    });
+  }
 
-  try {
-    await Event.insertMany(seedDocs, { ordered: false });
-    console.log(`Successfully seeded ${seedDocs.length} events into MongoDB.`);
-  } catch (err) {
-    // Ignore duplicate key errors if already present
+  if (missingDocs.length > 0) {
+    try {
+      await Event.insertMany(missingDocs, { ordered: false });
+      console.log(`Successfully seeded ${missingDocs.length} missing events into MongoDB.`);
+    } catch (err) {
+      console.error('Error inserting missing events:', err?.message || err);
+    }
   }
 }

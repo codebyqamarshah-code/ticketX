@@ -190,7 +190,7 @@ export default function AdminPanelPage() {
   const [eventSortBy, setEventSortBy] = useState('newest');
   const [eventViewMode, setEventViewMode] = useState('grid'); // 'grid' | 'list'
   const [eventPage, setEventPage] = useState(1);
-  const [eventLimit, setEventLimit] = useState(12);
+  const [eventLimit, setEventLimit] = useState(50);
   const [eventPagination, setEventPagination] = useState({ totalPages: 1, total: 0 });
   const [isLoadingEvents, setIsLoadingEvents] = useState(false);
 
@@ -952,6 +952,17 @@ export default function AdminPanelPage() {
           if (data.success) {
             showToast(data.message);
             fetchEvents();
+
+            if (typeof window !== 'undefined') {
+              try {
+                const deletedIds = JSON.parse(localStorage.getItem('ticketx-deleted-events') || '[]');
+                if (!deletedIds.includes(event.id)) {
+                  deletedIds.push(event.id);
+                  localStorage.setItem('ticketx-deleted-events', JSON.stringify(deletedIds));
+                }
+                window.dispatchEvent(new CustomEvent('ticketx-events-updated'));
+              } catch (_) {}
+            }
           } else {
             showToast(data.message || 'Failed to delete event.', 'error');
           }
@@ -1077,6 +1088,27 @@ export default function AdminPanelPage() {
         showToast(data.message, 'success');
         setIsWizardOpen(false);
         fetchEvents();
+
+        if (typeof window !== 'undefined' && data.event) {
+          try {
+            const savedEvent = data.event;
+            if (editingEventId) {
+              const editedDict = JSON.parse(localStorage.getItem('ticketx-edited-events') || '{}');
+              editedDict[savedEvent.id] = savedEvent;
+              localStorage.setItem('ticketx-edited-events', JSON.stringify(editedDict));
+            } else {
+              const custom = JSON.parse(localStorage.getItem('ticketx-custom-events') || '[]');
+              const existingIdx = custom.findIndex((e) => e.id === savedEvent.id);
+              if (existingIdx >= 0) {
+                custom[existingIdx] = savedEvent;
+              } else {
+                custom.unshift(savedEvent);
+              }
+              localStorage.setItem('ticketx-custom-events', JSON.stringify(custom));
+            }
+            window.dispatchEvent(new CustomEvent('ticketx-events-updated'));
+          } catch (_) {}
+        }
       } else {
         showToast(data.message || 'Operation failed.', 'error');
       }
@@ -2672,6 +2704,30 @@ export default function AdminPanelPage() {
                             List
                           </button>
                         </div>
+
+                        {/* Per Page */}
+                        <select
+                          value={eventLimit}
+                          onChange={(e) => {
+                            setEventLimit(Number(e.target.value));
+                            setEventPage(1);
+                          }}
+                          className="px-3 py-2 bg-[var(--bg-sec)] border border-[var(--border)] rounded-xl text-xs text-[var(--fg)] focus:outline-none focus:border-rose-600"
+                        >
+                          <option value={12}>12 / page</option>
+                          <option value={24}>24 / page</option>
+                          <option value={50}>50 / page</option>
+                          <option value={100}>100 / page</option>
+                        </select>
+
+                        {/* Direct Add Event Button */}
+                        <button
+                          onClick={handleOpenCreateEventWizard}
+                          className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-xs transition-all shadow-md shadow-rose-600/20 flex items-center gap-1.5 shrink-0"
+                        >
+                          <PlusCircle className="w-3.5 h-3.5" />
+                          <span>Add New Event</span>
+                        </button>
                       </div>
                     </div>
 
