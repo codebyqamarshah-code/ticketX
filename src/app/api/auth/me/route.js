@@ -19,7 +19,9 @@ export async function GET(req) {
     await connectDB();
     const user = await User.findById(decoded.userId);
     if (!user) {
-      return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
+      const resp = NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
+      resp.cookies.set('ticketx-token', '', { expires: new Date(0), path: '/' });
+      return resp;
     }
 
     return NextResponse.json({ 
