@@ -17,7 +17,7 @@ function useIsMounted() {
   );
 }
 
-export default function Logo({ className = '', onClick }) {
+export default function Logo({ className = '', imageClassName = '', width = 210, height = 58, onClick }) {
   const { theme } = useTheme();
   const isMounted = useIsMounted();
 
@@ -43,9 +43,9 @@ export default function Logo({ className = '', onClick }) {
           key={logoSrc}
           src={logoSrc}
           alt="TicketX Logo"
-          width={210}
-          height={58}
-          className="h-auto w-auto object-contain transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md max-h-14 md:max-h-16 lg:max-h-20"
+          width={width}
+          height={height}
+          className={`object-contain transition-all duration-300 drop-shadow-sm group-hover:drop-shadow-md ${imageClassName || 'h-auto w-auto max-h-14 md:max-h-16 lg:max-h-20'}`}
           priority
           unoptimized
         />

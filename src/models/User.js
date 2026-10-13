@@ -16,7 +16,16 @@ const UserSchema = new mongoose.Schema({
   emailVerificationOtpHash: { type: String },
   emailVerificationOtpExpiresAt: { type: Date },
   emailVerificationAttempts: { type: Number, default: 0 },
-  emailVerificationLastSentAt: { type: Date }
+  emailVerificationLastSentAt: { type: Date },
+  resetPasswordOtpHash: { type: String },
+  resetPasswordOtpExpiresAt: { type: Date },
+  resetPasswordAttempts: { type: Number, default: 0 },
+  resetPasswordLastSentAt: { type: Date },
+  lastLoginAt: { type: Date },
+  isDeleted: { type: Boolean, default: false },
+  pendingNewEmail: { type: String },
+  pendingEmailOtpHash: { type: String },
+  pendingEmailOtpExpiresAt: { type: Date }
 }, {
   timestamps: true
 });

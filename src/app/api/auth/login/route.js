@@ -24,9 +24,20 @@ export async function POST(req) {
       return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
     }
 
-    if (!user.emailVerified) {
-      return NextResponse.json({ success: false, message: 'Email not verified', unverified: true }, { status: 403 });
+    if (user.isDeleted) {
+      return NextResponse.json({ success: false, message: 'This account has been deactivated.' }, { status: 403 });
     }
+
+    if (user.status === 'Suspended') {
+      return NextResponse.json({ 
+        success: false, 
+        message: 'Your account has been suspended by an administrator. Please contact support.' 
+      }, { status: 403 });
+    }
+
+    // Update last login timestamp
+    user.lastLoginAt = new Date();
+    await user.save();
 
     // Success
     const token = signJwt({ userId: user._id, id: user.id, email: user.email, role: user.role });

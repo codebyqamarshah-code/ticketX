@@ -121,8 +121,8 @@ export function BookingProvider({ children }) {
     setHoldTimeSeconds(600);
   }, []);
 
-  const createOrder = (cartItems, customerInfo, paymentSummary, pricing) => {
-    const orderId = `TX-${Math.floor(100000 + Math.random() * 900000)}`;
+  const createOrder = (cartItems, customerInfo, paymentSummary, pricing, orderIdOverride = null) => {
+    const orderId = orderIdOverride || `TX-${Math.floor(100000 + Math.random() * 900000)}`;
     const bookedAt = new Date().toISOString();
 
     const newOrder = {

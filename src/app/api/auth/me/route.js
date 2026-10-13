@@ -18,8 +18,14 @@ export async function GET(req) {
 
     await connectDB();
     const user = await User.findById(decoded.userId);
-    if (!user) {
-      const resp = NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
+    if (!user || user.isDeleted) {
+      const resp = NextResponse.json({ success: false, message: 'User not found or deactivated' }, { status: 404 });
+      resp.cookies.set('ticketx-token', '', { expires: new Date(0), path: '/' });
+      return resp;
+    }
+
+    if (user.status === 'Suspended') {
+      const resp = NextResponse.json({ success: false, message: 'Account is suspended' }, { status: 403 });
       resp.cookies.set('ticketx-token', '', { expires: new Date(0), path: '/' });
       return resp;
     }

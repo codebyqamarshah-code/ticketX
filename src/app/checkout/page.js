@@ -72,24 +72,53 @@ export default function CheckoutPage() {
     setProcessing(true);
     setErrorMsg('');
 
-    // Simulate payment processing delay
-    setTimeout(() => {
-      try {
-        const orderId = createOrder(
+    try {
+      // 1. Post to server-side orders API
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           cart,
-          { firstName: form.firstName, lastName: form.lastName, email: form.email, phone: form.phone },
-          { cardMask: `•••• ${form.cardNumber.slice(-4) || '4242'}` },
+          customer: {
+            firstName: form.firstName,
+            lastName: form.lastName,
+            email: form.email,
+            phone: form.phone,
+            city: form.city,
+            country: form.country || 'USA'
+          },
+          payment: {
+            cardMask: `•••• ${form.cardNumber.slice(-4) || '4242'}`
+          },
           pricing
-        );
+        })
+      });
 
-        clearCart();
+      const data = await res.json();
+      if (!data.success) {
         setProcessing(false);
-        router.push(`/confirmation/${orderId}`);
-      } catch (err) {
-        setProcessing(false);
-        setErrorMsg('Payment processing failed. Please try again.');
+        setErrorMsg(data.message || 'Payment processing failed. Please try again.');
+        return;
       }
-    }, 1500);
+
+      const confirmedOrderId = data.orderId || `TX-${Math.floor(100000 + Math.random() * 900000)}`;
+
+      // 2. Sync client-side booking context for instant confirmation view
+      createOrder(
+        cart,
+        { firstName: form.firstName, lastName: form.lastName, email: form.email, phone: form.phone },
+        { cardMask: `•••• ${form.cardNumber.slice(-4) || '4242'}` },
+        pricing,
+        confirmedOrderId
+      );
+
+      clearCart();
+      setProcessing(false);
+      router.push(`/confirmation/${confirmedOrderId}`);
+    } catch (err) {
+      setProcessing(false);
+      setErrorMsg('Network error while processing payment. Please try again.');
+    }
   };
 
   if (cart.length === 0) {
